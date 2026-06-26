@@ -1,0 +1,6 @@
+{
+  "name": "Khoi Hoang Portfolio",
+  "description": "An interactive, highly polished design and engineering portfolio for Khoi Hoang, featuring smooth parallax scrolling, elegant typography, and sleek animations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
