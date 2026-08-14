@@ -29,12 +29,11 @@
 ## 2. Hero Section
 
 * **Visual Element**: 3D layered typography (`KHOI HOANG`) with grayscale cutout portrait.
-* **Sub-headline / Value Proposition**:
-  "First-year IEM student at Constructor University. I like taking messy, manual problems and engineering working systems out of them."
+* **Value Proposition HUD**:
+  "Diagnosing broken bottlenecks, cutting the noise, and engineering working systems."
 * **CTAs**:
   * Primary: `View Work` (Scrolls down to work and case studies)
   * Secondary: `About Me` (Opens the personal background drawer)
-* **Scroll Prompt**: Animated indicator labeled "Scroll".
 
 ---
 

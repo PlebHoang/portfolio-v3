@@ -213,23 +213,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen }) => {
       </div>
 
       {/* Value Proposition & CTA Buttons */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-4 select-none w-full max-w-xl px-4">
-        <p className="text-center font-sans text-xs sm:text-sm text-neutral-600 font-medium leading-relaxed max-w-lg">
-          First-year IEM student at Constructor University. I like taking messy, manual problems and engineering working systems out of them.
-        </p>
-        <div className="flex gap-4">
+      <div className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-3 select-none w-full max-w-xl px-4">
+        <div className="backdrop-blur-md bg-[#F7F6F3]/90 border border-[#d4d4d0] px-5 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.04)] text-center">
+          <p className="font-sans text-xs sm:text-[13px] text-neutral-700 font-medium tracking-tight">
+            Diagnosing broken bottlenecks, cutting the noise, and engineering working systems.
+          </p>
+        </div>
+
+        <div className="flex gap-3 pt-0.5">
           <button
             onClick={() => {
               const el = document.getElementById("works");
               if (el) el.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-6 py-3 bg-black text-white font-sans text-[11px] font-bold tracking-widest uppercase hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
+            className="px-6 py-2.5 bg-black text-white font-sans text-[11px] font-bold tracking-widest uppercase rounded hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
           >
             View Work
           </button>
           <button
             onClick={onAboutOpen}
-            className="px-6 py-3 border border-[#d4d4d0] bg-white text-black font-sans text-[11px] font-bold tracking-widest uppercase hover:border-black hover:bg-neutral-50 transition-colors cursor-pointer"
+            className="px-6 py-2.5 border border-[#d4d4d0] bg-white text-black font-sans text-[11px] font-bold tracking-widest uppercase rounded hover:border-black hover:bg-neutral-50 transition-colors cursor-pointer"
           >
             About Me
           </button>
@@ -237,24 +240,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen }) => {
       </div>
 
       {/* Bottom gradient fade into page */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#F7F6F3] to-transparent pointer-events-none z-15" />
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2"
-      >
-        <span className="font-sans text-[9px] font-bold tracking-[0.3em] uppercase text-neutral-500">
-          Scroll
-        </span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="w-[1px] h-6 bg-neutral-400"
-        />
-      </motion.div>
+      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#F7F6F3] to-transparent pointer-events-none z-15" />
     </section>
   );
 };
