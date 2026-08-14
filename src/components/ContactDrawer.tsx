@@ -28,11 +28,16 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
     if (!name || !email || !message) return;
 
     setIsSubmitting(true);
-    // Simulate API request to show real-world responsiveness
+    // ponytail: mailto fallback, add Formspree/serverless handler when needed
+    const mailtoBody = encodeURIComponent(`Name: ${name}\nEmail Coordinates: ${email}\n\nMessage:\n${message}`);
+    const mailtoLink = `mailto:hoangnguyenkhoi07@gmail.com?subject=${encodeURIComponent(`[Portfolio Outreach - ${subject}] ${name}`)}&body=${mailtoBody}`;
+    
+    // Tiny delay to make the loader state feel responsive before opening client
     setTimeout(() => {
+      window.open(mailtoLink, "_blank");
       setIsSubmitting(false);
       setIsSuccess(true);
-    }, 1500);
+    }, 800);
   };
 
   const resetForm = () => {
@@ -74,7 +79,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-[#d4d4d0]">
-              <span className="font-sans font-bold tracking-widest text-xs uppercase text-[#111111]">
+              <span className="font-sans font-bold tracking-widest text-sm uppercase text-[#111111]">
                 Contact / Initiate Dialogue
               </span>
               <button
@@ -99,15 +104,15 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                     className="space-y-6"
                   >
                     <div className="space-y-2">
-                      <h2 className="font-display font-black text-3xl tracking-tight uppercase">Let's craft something meaningful.</h2>
-                      <p className="font-sans text-xs text-neutral-600 leading-relaxed">
-                        I am currently accepting select opportunities for product design and front-end engineering consultancy. Or drop by and say hello at <a href="mailto:hnkhoi1503@gmail.com" className="underline font-bold text-black hover:opacity-80">hnkhoi1503@gmail.com</a>.
+                      <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight text-neutral-900">Let's craft something meaningful.</h2>
+                      <p className="font-sans text-sm text-neutral-600 leading-relaxed">
+                        I am currently accepting select opportunities for product design and front-end engineering consultancy. Or drop by and say hello at <a href="mailto:hoangnguyenkhoi07@gmail.com" className="underline font-bold text-black hover:opacity-80">hoangnguyenkhoi07@gmail.com</a>.
                       </p>
                     </div>
 
                     {/* Subject Selector Buttons */}
                     <div className="space-y-2">
-                      <label className="font-sans font-bold text-[10px] tracking-widest uppercase text-neutral-500">
+                      <label className="font-sans font-bold text-xs tracking-widest uppercase text-neutral-500">
                         Purpose of Outreach
                       </label>
                       <div className="grid grid-cols-2 gap-2">
@@ -116,7 +121,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                             key={type}
                             type="button"
                             onClick={() => setSubject(type)}
-                            className={`p-3 border text-xs font-sans font-bold rounded-md text-left capitalize transition-all ${
+                            className={`p-3 border text-sm font-sans font-bold rounded-xl text-left capitalize transition-all cursor-pointer ${
                               subject === type
                                 ? "bg-black border-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)]"
                                 : "bg-white/40 border-[#d4d4d0] text-neutral-800 hover:border-black"
@@ -132,8 +137,8 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                     </div>
 
                     {/* Name Input */}
-                    <div className="space-y-1">
-                      <label htmlFor="name" className="font-sans font-bold text-[10px] tracking-widest uppercase text-neutral-500">
+                    <div className="space-y-1.5">
+                      <label htmlFor="name" className="font-sans font-bold text-xs tracking-widest uppercase text-neutral-500">
                         Your Identity
                       </label>
                       <input
@@ -143,13 +148,13 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                         placeholder="E.g. Elena Rostova"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full p-4 border border-[#d4d4d0] rounded-md bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black transition-colors placeholder-neutral-400"
+                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-neutral-400"
                       />
                     </div>
 
                     {/* Email Input */}
-                    <div className="space-y-1">
-                      <label htmlFor="email" className="font-sans font-bold text-[10px] tracking-widest uppercase text-neutral-500">
+                    <div className="space-y-1.5">
+                      <label htmlFor="email" className="font-sans font-bold text-xs tracking-widest uppercase text-neutral-500">
                         Digital Coordinates (Email)
                       </label>
                       <input
@@ -159,13 +164,13 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                         placeholder="E.g. elena@company.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-4 border border-[#d4d4d0] rounded-md bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black transition-colors placeholder-neutral-400"
+                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-neutral-400"
                       />
                     </div>
 
                     {/* Message Area */}
-                    <div className="space-y-1">
-                      <label htmlFor="message" className="font-sans font-bold text-[10px] tracking-widest uppercase text-neutral-500">
+                    <div className="space-y-1.5">
+                      <label htmlFor="message" className="font-sans font-bold text-xs tracking-widest uppercase text-neutral-500">
                         Narrative Details
                       </label>
                       <textarea
@@ -175,7 +180,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                         placeholder="Describe your vision, scope, or timeline..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full p-4 border border-[#d4d4d0] rounded-md bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black transition-colors resize-none placeholder-neutral-400"
+                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all resize-none placeholder-neutral-400"
                       />
                     </div>
 
@@ -183,7 +188,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-4 bg-black text-white font-sans font-bold text-xs tracking-widest uppercase rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:bg-neutral-300"
+                      className="w-full py-4 bg-black text-white font-sans font-bold text-sm tracking-widest uppercase rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:bg-neutral-300 cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
@@ -222,14 +227,14 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                       <h3 className="font-display font-black text-2xl uppercase tracking-tight text-neutral-900">
                         Transmission Successful
                       </h3>
-                      <p className="font-sans text-xs text-neutral-600 max-w-sm mx-auto leading-relaxed">
+                      <p className="font-sans text-sm text-neutral-600 max-w-sm mx-auto leading-relaxed">
                         Thank you for reaching out, <strong className="text-black">{name}</strong>. Your message regarding <strong className="text-black">{subject}</strong> has been successfully registered. I will read and respond within 24 business hours.
                       </p>
                     </div>
 
                     <button
                       onClick={handleClose}
-                      className="px-6 py-3 border border-[#d4d4d0] rounded-md font-sans font-bold text-[10px] tracking-widest uppercase text-neutral-800 hover:border-black hover:text-black transition-all"
+                      className="px-6 py-3 border border-[#d4d4d0] rounded-xl font-sans font-bold text-xs tracking-widest uppercase text-neutral-800 hover:border-black hover:text-black transition-all cursor-pointer"
                     >
                       Return to Workspace
                     </button>
@@ -238,13 +243,13 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
               </AnimatePresence>
 
               {/* Coordinates Footer */}
-              <div className="mt-8 pt-6 border-t border-[#d4d4d0] flex flex-col sm:flex-row items-center justify-between text-[10px] font-sans text-neutral-500 uppercase tracking-widest gap-4">
+              <div className="mt-8 pt-6 border-t border-[#d4d4d0] flex flex-col sm:flex-row items-center justify-between text-xs font-sans text-neutral-500 uppercase tracking-widest gap-4">
                 <div className="flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-black" />
-                  <span className="text-neutral-600">hnkhoi1503@gmail.com</span>
+                  <Mail className="w-4 h-4 text-black" />
+                  <span className="text-neutral-600">hoangnguyenkhoi07@gmail.com</span>
                 </div>
                 <div>
-                  <span className="text-neutral-600">Bremen, Germany • UTC +2</span>
+                  <span className="text-neutral-600">Bremen, Germany • +49 155 65196995</span>
                 </div>
               </div>
             </div>

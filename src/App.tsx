@@ -3,891 +3,839 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
-import { ArrowDown, ArrowUpRight, ArrowRight, BookOpen, Layers, Zap, Info, Mail } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Mail } from "lucide-react";
+import { animate, stagger } from "animejs";
+import { Link } from "react-router-dom";
 
-import { TSMonogram, ConstructorUniversityLogo, EMASIBadge, WavyPattern, CornerArrows } from "./components/SVGIcons";
-import { PortraitSVG } from "./components/PortraitSVG";
 import { AboutDrawer } from "./components/AboutDrawer";
 import { ContactDrawer } from "./components/ContactDrawer";
-import { ExperienceModal } from "./components/ExperienceModal";
-import { Experience, Capability, BeyondItem } from "./types";
+import { CustomCursor } from "./components/CustomCursor";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { HeroSection } from "./components/HeroSection";
+import { PhilosophyCarousel } from "./components/PhilosophyCarousel";
+import { DesignGrid } from "./components/DesignGrid";
+import { BucketList } from "./components/BucketList";
+import { MarqueeTicker } from "./components/MarqueeTicker";
+import { PillNav } from "./components/PillNav";
+import { EnsoScreensaver } from "./components/EnsoScreensaver";
+import { ItemDrawer, ItemDetails } from "./components/ItemDrawer";
+import { ProjectCarousel, CarouselProject } from "./components/ProjectCarousel";
+import { CommandPalette } from "./components/CommandPalette";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface Experience {
+  id: string;
+  role: string;
+  company: string;
+  location: string;
+  period: string;
+  summary: string;
+  description: string[];
+  technologies: string[];
+  link?: string;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  period: string;
+  role: string;
+  summary: string;
+  technologies: string[];
+  highlight?: string;
+}
+
+interface YearOneItem {
+  num: string;
+  title: string;
+  domain: string;
+  story: string;
+  featured?: boolean;
+  highlight?: string;
+  mediaNote?: string;
+}
+
+// ─── Data (sourced from CV_Khoi_2026.pdf) ────────────────────────────────────
+
+const experiences: Experience[] = [
+  {
+    id: "dk-engineering",
+    role: "Engineering Intern",
+    company: "DK Engineering Ltd.",
+    location: "Onsite, Ha Noi, Vietnam",
+    period: "Oct 2024",
+    summary:
+      "Drew the power extraction circuit for a 1 MW (7,000 m²) commercial solar deployment and monitored live AI/IoT factory telemetry during industrial operations.",
+    description: [
+      "Mapped electrical circuit schematics for extracting and routing power from a 7,000 m² solar panel array rated at 1 MW capacity.",
+      "Coordinated technical specifications across contractors and construction teams for renewable energy installation projects.",
+      "Spotted an anomalous valve pressure spike on live AI/IoT sensor telemetry, triggering immediate preventative maintenance at the factory.",
+    ],
+    technologies: [
+      "Solar Circuit Design",
+      "Industrial IoT",
+      "Sensor Telemetry",
+      "Electrical Schematics",
+    ],
+    link: "https://docs.google.com/document/d/1sT7qXY-lAWTg8jxPSdger41W5dxy_NhA/edit?usp=sharing&ouid=105069165714848853856&rtpof=true&sd=true",
+  },
+  {
+    id: "sequoia-sky",
+    role: "Grant Seeker",
+    company: "Sequoia Sky Ltd. Co.",
+    location: "Remote, Ho Chi Minh City, Vietnam",
+    period: "Mar – Jun 2024",
+    summary:
+      "Created the first structured grant-seeking pipeline for an ESG non-profit with zero internal fundraising bandwidth, mapping 7 funding channels targeting $300k in green finance.",
+    description: [
+      "Identified and catalogued 7 high-potential funding channels across green bonds, green finance instruments, and traditional grant mechanisms.",
+      "Assembled a comprehensive Excel tracking system covering donor eligibility, compliance requirements, and application timelines into an actionable $300k capital roadmap.",
+      "Briefed the CEO on strategic pivot from grants to green bond/green finance instruments, establishing the company's first structured capital pipeline.",
+    ],
+    technologies: [
+      "Green Finance",
+      "Grant Research",
+      "ESG Frameworks",
+      "Capital Strategy",
+    ],
+    link: "https://drive.google.com/file/d/1KSDwA7mydbGayWU0AfEb8TuQd2ujGmxW/view?usp=sharing",
+  },
+  {
+    id: "student-gov",
+    role: "Advisor / President / Vice President",
+    company: "Student Government, EMASI Van Phuc",
+    location: "Onsite, Ho Chi Minh City, Vietnam",
+    period: "Aug 2022 – Jun 2025",
+    summary:
+      "Fixed broken internal communications across 30+ members, launched a PR channel that outperformed the official school page, and self-funded Prom by raising ~40M VND ($2,000) in 14 days.",
+    description: [
+      "Standardized team operations on Google Docs/Teams with weekly cadence, transforming fragmented group chats into reliable bi-monthly event execution.",
+      "Launched an organic PR/podcast channel that generated more interactions than the official school media page.",
+      "Organized an independent student-run product fundraiser (handmade food & drinks) that raised ~40,000,000 VND ($2,000 USD) in 14 days to self-fund the annual Prom.",
+    ],
+    technologies: [
+      "Crisis Management",
+      "Public Relations",
+      "Fundraising",
+      "Event Operations",
+    ],
+    link: "https://www.facebook.com/profile.php?id=100089082754802",
+  },
+];
+
+const projects: Project[] = [
+  {
+    id: "morning-assistant",
+    title: "AI-Integrated Morning Assistant",
+    period: "Jan 2026",
+    role: "System Architecture & Automation",
+    summary:
+      "Containerized a Python pipeline on Docker integrating the Gemini API to automate weekly planning across Calendar, Notion, and unstructured data. Cut 60 minutes of manual scheduling down to 2–3 minutes.",
+    technologies: ["Python", "Docker", "Gemini API", "Bash", "Discord Webhooks"],
+    highlight: "60 min → 3 min",
+  },
+  {
+    id: "hackathon-rover",
+    title: "Gemini × Makers Odyssey Hackathon",
+    period: "Dec 2025",
+    role: "Product Design & Prototyping",
+    summary:
+      "3D-printed an adaptable-wheel rover chassis in Fusion 360 and engineered offline ESP-to-ESP wireless mesh telemetry for a NASA-inspired Martian exploration challenge. Delivered a fully functional prototype within 48 hours and won 3rd Place overall.",
+    technologies: ["Fusion 360", "3D Printing", "Arduino", "ESP Mesh"],
+    highlight: "🏆 3rd Place",
+  },
+];
+
+const yearOneItems: YearOneItem[] = [
+  {
+    num: "01",
+    title: "The Fresh Connection",
+    domain: "Supply Chain",
+    story: "Simulated and stress-tested multi-tier supply chain networks under severe bullwhip effect scenarios, identifying critical inventory bottlenecks that destabilized fulfillment cycles.",
+    mediaNote: "📸 Add Supply Chain bottlenecks flow",
+  },
+  {
+    num: "02",
+    title: "33-Sheet Excel Beast",
+    domain: "Operations",
+    story: "Engineered an end-to-end 33-sheet parametric factory model with 2 teammates: ABC inventory analysis, MTM motion study, transport intensity matrices, facility layout optimization, and full BOM planning.",
+    featured: true,
+    highlight: "📊 Parametric Model",
+    mediaNote: "📸 Add 33-sheet factory planning screenshots",
+  },
+  {
+    num: "03",
+    title: "Sumobot (4th Place)",
+    domain: "Hardware",
+    story: "Wired and programmed an autonomous combat sumobot from scratch with no commercial kit or template. Placed 4th overall in the campus engineering tournament.",
+    mediaNote: "🎥 Add Sumobot battle video",
+  },
+  {
+    num: "04",
+    title: "3D Printed Room Parts",
+    domain: "Self-driven",
+    story: "Sourced and adapted existing CAD designs to 3D print and post-process custom functional room organizers and brackets by hand, solving personal storage bottlenecks.",
+    mediaNote: "📸 Add 3D prototype photo",
+  },
+];
+
+const allProjects: CarouselProject[] = [
+  ...projects.map((p) => ({
+    id: p.id,
+    title: p.title,
+    domain: p.role,
+    summary: p.summary,
+    highlight: p.highlight,
+    technologies: p.technologies,
+  })),
+  ...yearOneItems.map((y) => ({
+    id: `yearone-${y.num}`,
+    title: y.title,
+    domain: `${y.domain} • Year 1`,
+    summary: y.story,
+    highlight: y.highlight,
+    technologies: [],
+  })),
+];
+
+const capabilities = [
+  {
+    id: "robotics",
+    title: "Robotics & Hardware",
+    skills: ["Fusion 360", "3D Printing", "Arduino", "Sumobot"],
+    description:
+      "Designing mechanical enclosures, custom hardware prototypes, and rapid physical iteration from CAD to print.",
+  },
+  {
+    id: "industrial-eng",
+    title: "Industrial Engineering",
+    skills: ["Supply Chain", "Factory Design", "Lean MTM/BOM", "Operations"],
+    description:
+      "Optimising manufacturing processes, modelling facility layouts, and simulating dynamic production networks.",
+  },
+  {
+    id: "software-sys",
+    title: "Software & Automation",
+    skills: ["Python", "Docker", "Gemini API", "TypeScript/Bun"],
+    description:
+      "Building containerised automation pipelines, AI-integrated tools, and full-stack applications.",
+  },
+];
+
+// ─── App ─────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  // Navigation & Details Drawers State
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
-  const [activeExperience, setActiveExperience] = useState<Experience | null>(null);
-  const [imageFailed, setImageFailed] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
+  const [showPalette, setShowPalette] = useState(false);
+  const [showEnso, setShowEnso] = useState(false);
+  const [konamiFound, setKonamiFound] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
+  const [selectedItem, setSelectedItem] = useState<ItemDetails | null>(null);
 
-  // Parallax scroll hook
   const { scrollY } = useScroll();
-  
-  // Transform values for parallax layers in the Hero section
-  const bgTextY = useTransform(scrollY, [0, 800], [0, -100]);
-  const heroImageY = useTransform(scrollY, [0, 800], [0, 60]);
-  const foregroundTextY = useTransform(scrollY, [0, 800], [0, 120]);
-  const arrowScrollY = useTransform(scrollY, [0, 800], [0, 180]);
+  const headerShadow = useTransform(
+    scrollY,
+    [550, 650],
+    ["0px 0px 0px rgba(0,0,0,0)", "0px 4px 20px rgba(0,0,0,0.06)"]
+  );
 
-  // Data Definitions
-  const capabilities: Capability[] = [
-    {
-      id: "robotics",
-      title: "Robotics & Hardware",
-      skills: ["ROS2 Swarm", "3D Design", "Sumobot", "Microcontrollers"],
-      description: "Designing autonomous robotic mobility systems, custom PCB integration, and swarm co-ordination software architectures."
-    },
-    {
-      id: "industrial-eng",
-      title: "Industrial Engineering",
-      skills: ["Supply Chain", "Factory Design", "Lean MTM/BOM", "Operations"],
-      description: "Optimizing manufacturing processes, modelling facility capacity layouts, and simulating dynamic network queue systems."
-    },
-    {
-      id: "software-sys",
-      title: "Software & Systems",
-      skills: ["RAG Engine", "TypeScript/Bun", "Full-Stack", "Docker/Infra"],
-      description: "Architecting high-fidelity interactive software tools, full-stack reactive applications, and secure cloud system platforms."
-    }
-  ];
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "g") {
+        e.preventDefault();
+        setShowGrid((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
-  const experiences: Experience[] = [
-    {
-      id: "robotics-swarm",
-      role: "Lead Systems Engineer / Researcher",
-      company: "Autonomous Systems Lab",
-      logoType: "ts",
-      period: "2024 - Present",
-      summary: "Engineered ROS2-based robotic swarm navigation algorithms and spearheaded a major $300k ESG industrial facility audit.",
-      description: [
-        "Co-developed autonomous rover swarm coordination algorithms utilizing ROS2 and physical simulations, achieving 3rd place in the regional hackathon.",
-        "Led a comprehensive ESG operational optimization and supply chain capacity audit for a manufacturing plant with a $300k structural budget.",
-        "Programmed a custom Python-based analytics engine to ingest real-time telemetry from multiple IoT sensor nodes in the lab environment."
-      ],
-      technologies: ["ROS2", "Python", "3D Design", "Systems Optimization", "Dynamic Systems"],
-      metrics: ["3rd Place Hackathon", "$300k ESG Audit", "+45% Efficiency"]
-    },
-    {
-      id: "constructor-uni",
-      role: "Interactive Tools Developer",
-      company: "Constructor University",
-      logoType: "constructor",
-      period: "2023 - 2024",
-      summary: "Developed high-fidelity educational simulators and interactive data visualization systems for engineering courses.",
-      description: [
-        "Designed and implemented high-fidelity physics-based simulations on the web using SVG manipulation and React hooks.",
-        "Crafted interactive data visualization screens that allowed real-time tracking of student analytics and system feedback loops.",
-        "Collaborated with academic researchers to turn complex industrial engineering models into responsive, easy-to-use tools."
-      ],
-      technologies: ["TypeScript", "SVG Canvas", "D3.js", "React Context", "Tailwind CSS"],
-      metrics: ["2.5k+ Students", "+48% Engagement", "99.8% System Uptime"]
-    }
-  ];
+  // Keyboard shortcut listener for Command Palette (⌘K)
+  useEffect(() => {
+    const handleShortcut = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setShowPalette((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
 
-  const beyondItems: BeyondItem[] = [
-    {
-      id: "boxing",
-      title: "Boxing Training",
-      category: "Focus & Reflexes",
-      imageUrl: "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=800&auto=format&fit=crop",
-      description: "Honing strategic foresight, split-second analytical reactions, and persistent mental focus inside and outside the ring."
-    },
-    {
-      id: "camera",
-      title: "Vintage Cameras",
-      category: "Visual Narrative",
-      imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop",
-      description: "Exploring composition mechanics, shadows, and temporal fragments using vintage mechanical SLRs."
-    },
-    {
-      id: "mountain",
-      title: "Alpine Climbing",
-      category: "Grit & Alpinism",
-      imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800&auto=format&fit=crop",
-      description: "Pushing raw endurance, altitude limits, and risk assessment paradigms across alpine glaciers and peaks."
-    }
-  ];
+  // Konami Code detector for secret inline toast
+  useEffect(() => {
+    const konamiSeq = [
+      "arrowup",
+      "arrowup",
+      "arrowdown",
+      "arrowdown",
+      "arrowleft",
+      "arrowright",
+      "arrowleft",
+      "arrowright",
+      "b",
+      "a",
+    ];
+    let index = 0;
 
-  // Helper to smooth scroll to an element
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (key === konamiSeq[index]) {
+        index++;
+        if (index === konamiSeq.length) {
+          index = 0;
+          setKonamiFound(true);
+          setTimeout(() => setKonamiFound(false), 4000);
+        }
+      } else {
+        index = 0;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Active section scroll tracking
+  useEffect(() => {
+    const sections = ["hero", "philosophy", "year-one", "projects", "works", "capabilities", "bucket", "connect"];
+    const handleScroll = () => {
+      let current = "hero";
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight * 0.4) {
+            current = id;
+          }
+        }
+      }
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // 15-second Idle screensaver timer
+  useEffect(() => {
+    let idleTimer: NodeJS.Timeout;
+
+    const resetIdleTimer = () => {
+      clearTimeout(idleTimer);
+      if (isLoading || isAboutOpen || isContactOpen || showPalette || showEnso) return;
+
+      idleTimer = setTimeout(() => {
+        setShowEnso(true);
+      }, 60000);
+    };
+
+    const events = ["mousemove", "keydown", "scroll", "touchstart", "click"];
+    events.forEach((event) => window.addEventListener(event, resetIdleTimer, { passive: true }));
+    
+    resetIdleTimer();
+
+    return () => {
+      clearTimeout(idleTimer);
+      events.forEach((event) => window.removeEventListener(event, resetIdleTimer));
+    };
+  }, [isLoading, isAboutOpen, isContactOpen, showPalette, showEnso]);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    animate(e.currentTarget, {
+      scale: 1.05,
+      translateY: -2,
+      duration: 400,
+      easing: "spring(1, 80, 10, 0)",
+    });
   };
 
-  // Motion variants for philosophy staggered text reveal
-  const philosophyQuote = "IT IS UNWISE TO BE TOO SURE OF ONE'S OWN WISDOM. IT IS HEALTHY TO BE REMINDED THAT THE STRONGEST MIGHT WEAKEN AND THE WISEST ERR.";
-  const quoteWords = philosophyQuote.split(" ");
+  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    animate(e.currentTarget, {
+      scale: 1.0,
+      translateY: 0,
+      duration: 400,
+      easing: "spring(1, 80, 10, 0)",
+    });
+  };
+
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px 0px -100px 0px",
+      threshold: 0.05,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (entry.target.id === "year-one") {
+            animate("#year-one .year-one-item", {
+              translateY: [40, 0],
+              scale: [0.97, 1],
+              opacity: [0, 1],
+              delay: stagger(40),
+              easing: "spring(1, 80, 10, 0)",
+            });
+            observer.unobserve(entry.target);
+          } else if (entry.target.id === "capabilities") {
+            animate("#capabilities .capability-item", {
+              translateY: [40, 0],
+              scale: [0.97, 1],
+              opacity: [0, 1],
+              delay: stagger(60),
+              easing: "spring(1, 80, 10, 0)",
+            });
+            observer.unobserve(entry.target);
+          }
+        }
+      });
+    }, observerOptions);
+
+    const yearOneEl = document.getElementById("year-one");
+    const capabilitiesEl = document.getElementById("capabilities");
+
+    if (yearOneEl) observer.observe(yearOneEl);
+    if (capabilitiesEl) observer.observe(capabilitiesEl);
+
+    return () => {
+      if (yearOneEl) observer.unobserve(yearOneEl);
+      if (capabilitiesEl) observer.unobserve(capabilitiesEl);
+    };
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const staggerContainer = {
     hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.04,
-      }
-    }
+    visible: { transition: { staggerChildren: 0.04 } },
   };
 
   const wordFadeIn = {
     hidden: { opacity: 0.12, y: 8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.45, ease: "easeOut" }
-    }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+  };
+
+  const sectionReveal = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] as const } },
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between selection:bg-black selection:text-white relative bg-[#F7F6F3]">
-      
-      {/* Editorial Decorative Background Grain / Texture overlay */}
-      <div className="pointer-events-none fixed inset-0 opacity-[0.02] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px] z-40" />
+    <>
+      {/* Loading Screen */}
+      <AnimatePresence>
+        {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
 
-      {/* 1. HEADER NAVIGATION */}
-      <header className="sticky top-0 w-full z-40 bg-[#F7F6F3]/80 backdrop-blur-md border-b border-[#d4d4d0]">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          
-          {/* Logo brand (KH style) */}
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-1.5 cursor-pointer select-none group"
-            id="brand-logo"
-          >
-            <span className="font-serif font-black text-2xl tracking-tighter text-[#111111] transition-colors duration-300 group-hover:opacity-75">
-              KH
-            </span>
-            <div className="w-1.5 h-1.5 bg-black rounded-full animate-pulse mt-2" />
-          </button>
+      {/* Custom Cursor */}
+      <CustomCursor />
 
-          {/* Nav menu links */}
-          <nav className="flex items-center gap-8 md:gap-12">
-            <button
-              onClick={() => scrollToSection("works")}
-              className="relative py-1 group cursor-pointer text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
-              id="nav-works"
-            >
-              Works
-              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
-            </button>
+      {/* Ensō Screensaver */}
+      <AnimatePresence>
+        {showEnso && <EnsoScreensaver onDismiss={() => setShowEnso(false)} />}
+      </AnimatePresence>
 
-            <button
-              onClick={() => setIsAboutOpen(true)}
-              className="relative py-1 group cursor-pointer text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
-              id="nav-about"
-            >
-              About
-              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
-            </button>
-
-            <button
-              onClick={() => setIsContactOpen(true)}
-              className="relative py-1 group cursor-pointer text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
-              id="nav-contact"
-            >
-              Contact
-              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
-            </button>
-          </nav>
-        </div>
-      </header>
-
-      {/* MAIN CONTAINER */}
-      <main className="flex-1 max-w-7xl mx-auto px-6 w-full space-y-24 md:space-y-36 py-8">
-        
-        {/* 2. HERO / PARALLAX HEADER */}
-        <section className="relative w-full overflow-hidden bg-transparent min-h-[480px] md:min-h-[580px] flex flex-col justify-between py-6 md:py-8 select-none">
-          
-          {/* Top Row matching screenshot layout */}
-          <div className="flex items-center justify-between text-[10px] md:text-xs font-sans font-bold tracking-[0.25em] text-[#111111] uppercase pb-4">
-            <span>Think . Research . Build . Validate . Loop</span>
-            <button
-              onClick={() => setIsContactOpen(true)}
-              className="flex items-center gap-1 group cursor-pointer focus:outline-none"
-              aria-label="Connect"
-              id="hero-connect-arrow"
-            >
-              {/* Custom elegant thin arrow matching screenshot */}
-              <svg viewBox="0 0 100 24" className="w-16 h-4 text-black stroke-current transition-transform duration-300 group-hover:translate-x-2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="12" x2="90" y2="12" strokeWidth="1.5" />
-                <path d="M82 6 L90 12 L82 18" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Massive Display Title Layers matching the layout of KHOI [PORTRAIT] HOANG with outline effect */}
-          <div className="relative w-full flex-1 flex items-center justify-center py-6 min-h-[280px] sm:min-h-[380px] md:min-h-[460px] overflow-visible">
-            <div className="relative w-full h-full flex items-center justify-center select-none overflow-visible">
-              
-              {/* Layer 1: Solid Background Text */}
-              <motion.div
-                style={{ y: bgTextY }}
-                className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center gap-[4vw] md:gap-[6vw] xl:gap-[8vw] pointer-events-none z-0"
-              >
-                <h1 className="font-display font-black text-[15vw] md:text-[12vw] leading-none text-[#111111] uppercase tracking-tighter select-none">
-                  KHOI
-                </h1>
-                <h1 className="font-display font-black text-[15vw] md:text-[12vw] leading-none text-[#111111] uppercase tracking-tighter select-none">
-                  HOANG
-                </h1>
-              </motion.div>
-              
-              {/* Layer 2: PORTRAIT IMAGE - Layered in the middle with OK sign */}
-              <motion.div
-                style={{ y: heroImageY }}
-                className="absolute bottom-[-16px] h-[105%] sm:h-[115%] md:h-[125%] max-h-[550px] aspect-[4/5] z-10 pointer-events-none flex items-end justify-center overflow-visible"
-              >
-                {!imageFailed ? (
-                  <img
-                    src="/myface.png"
-                    onError={() => {
-                      setImageFailed(true);
-                    }}
-                    alt="Khoi Hoang elegant portrait"
-                    className="h-full w-auto object-contain filter grayscale contrast-[1.15] brightness-[1.02] hover:scale-102 transition-transform duration-700 pointer-events-auto"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <PortraitSVG className="h-full w-auto aspect-[4/5] pointer-events-auto" />
-                )}
-              </motion.div>
-              
-              {/* Layer 3: Foreground Outline Text (for beautiful 3D overlay) */}
-              <motion.div
-                style={{ y: bgTextY }}
-                className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center gap-[4vw] md:gap-[6vw] xl:gap-[8vw] pointer-events-none z-20"
-              >
-                <h1 className="font-display font-black text-[15vw] md:text-[12vw] leading-none text-transparent uppercase tracking-tighter select-none">
-                  KHOI
-                </h1>
-                <h1 className="font-display font-black text-[15vw] md:text-[12vw] leading-none text-transparent uppercase tracking-tighter select-none flex">
-                  <span className="text-outline-thin">H</span>
-                  <span className="text-outline-thin">O</span>
-                  <span className="text-transparent">ANG</span>
-                </h1>
-              </motion.div>
-              
-            </div>
-          </div>
-
-          {/* Hero Bottom Info Rail with wavy line matching the screenshot */}
-          <div className="pt-6 border-t border-[#d4d4d0] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative">
-            
-            {/* Left Label: Academic Identity */}
-            <div className="text-left">
-              <div className="font-sans text-xs font-black tracking-wider text-neutral-500 uppercase">
-                IEM Student @ Constructor University
-              </div>
-            </div>
-            
-            {/* Right Wave Contour Lines precisely matching the screenshot */}
-            <div className="absolute right-0 bottom-0 opacity-80 pointer-events-none translate-y-3 hidden sm:block">
-              <WavyPattern className="w-32 h-20 text-neutral-400/60" />
-            </div>
-          </div>
-        </section>
-
-        {/* 3. PHILOSOPHY SECTION */}
-        <section id="philosophy" className="space-y-6 pt-12">
-          {/* Label Header */}
-          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
-            <span>Philosophy</span>
-            <div className="flex items-center gap-1.5 text-neutral-500">
-              <span>Staggered Reveal on Scroll</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-
-          {/* Interactive Staggered Text Block */}
+      {/* Konami Easter Egg Toast */}
+      <AnimatePresence>
+        {konamiFound && (
           <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-120px" }}
-            className="flex flex-wrap font-display font-black text-[4.2vw] sm:text-[3.5vw] md:text-[3vw] uppercase tracking-tight text-neutral-900 leading-none select-text py-4"
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 bg-black text-white font-mono text-xs rounded-full shadow-2xl flex items-center gap-2 border border-neutral-800"
           >
-            {quoteWords.map((word, idx) => (
-              <motion.span
-                key={idx}
-                variants={wordFadeIn}
-                className="mr-[1.5vw] mb-[1.2vw] block relative cursor-default hover:text-neutral-500 transition-colors"
-              >
-                {word}
-              </motion.span>
-            ))}
+            <span className="animate-bounce">🎮</span> ↑↑↓↓←→←→BA · You found it. Let's build something.
           </motion.div>
-        </section>
+        )}
+      </AnimatePresence>
 
-        {/* 4. YEAR ONE BENTO GRID SECTION */}
-        <section id="year-one" className="space-y-8 pt-6">
-          {/* Label Header */}
-          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
-            <span>Year One</span>
-            <span className="text-neutral-500">10-Item Academic & Leadership Bento Grid</span>
+      {/* Item Details Drawer */}
+      <ItemDrawer item={selectedItem} onClose={() => setSelectedItem(null)} />
+
+      {/* Command Palette */}
+      <CommandPalette
+        isOpen={showPalette}
+        onClose={() => setShowPalette(false)}
+        onOpenAbout={() => setIsAboutOpen(true)}
+        onOpenContact={() => setIsContactOpen(true)}
+      />
+
+      {/* Pill Navigation */}
+      <PillNav onOpenPalette={() => setShowPalette(true)} />
+
+      <div className="min-h-screen flex flex-col justify-between selection:bg-black selection:text-white relative bg-[#F7F6F3]">
+        {/* Subtle dot-grid texture overlay */}
+        <div className="pointer-events-none fixed inset-0 opacity-[0.018] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:24px_24px] z-40" />
+
+        {/* ── HEADER ── */}
+        <motion.header style={{ boxShadow: headerShadow }} className="sticky top-0 w-full z-40 bg-[#F7F6F3]/80 backdrop-blur-md border-b border-[#d4d4d0]">
+          <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="flex items-center gap-1.5 cursor-pointer select-none group"
+              id="brand-logo"
+            >
+              <span className="font-serif font-black text-2xl tracking-tighter text-[#111111] transition-colors duration-300 group-hover:opacity-75">
+                KH
+              </span>
+              <div className="w-1.5 h-1.5 bg-black rounded-full animate-pulse mt-2" />
+            </button>
+
+            <nav className="flex items-center gap-6 md:gap-8">
+              {/* Design Grid Toggle */}
+              <button
+                onClick={() => setShowGrid(!showGrid)}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className="px-3 py-1.5 border border-[#d4d4d0] hover:border-black hover:bg-neutral-100 rounded transition-all cursor-pointer flex items-center gap-2 text-xs font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black"
+                title="Toggle Design Grid (Ctrl+G)"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    x="1"
+                    y="1"
+                    width="10"
+                    height="10"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill={showGrid ? "currentColor" : "none"}
+                    className="transition-colors duration-300"
+                  />
+                </svg>
+                <span>{showGrid ? "Hide Grid" : "Show Grid"}</span>
+              </button>
+
+              {[
+                { label: "Works", action: () => scrollToSection("works") },
+                { label: "About", action: () => setIsAboutOpen(true) },
+                { label: "Contact", action: () => setIsContactOpen(true) },
+              ].map(({ label, action }) => (
+                <button
+                  key={label}
+                  onClick={action}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  className="relative py-1 group cursor-pointer text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
+                  id={`nav-${label.toLowerCase()}`}
+                >
+                  {label}
+                  <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
+                </button>
+              ))}
+              <Link
+                to="/newsletter"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className="relative py-1 group cursor-pointer text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
+              >
+                Newsletter
+                <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
+              </Link>
+            </nav>
           </div>
+        </motion.header>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {/* Item 1 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
-            >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">01</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">Supply Chain Analysis</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Industrial Eng.</span>
-            </motion.div>
+        {/* ── MAIN ── */}
+        <main className="flex-1 w-full">
+          {/* ── HERO: 3D Layered Composition ── */}
+          <HeroSection onAboutOpen={() => setIsAboutOpen(true)} />
 
-            {/* Item 2 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
-            >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">02</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">33-Sheet Excel System</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Operations</span>
-            </motion.div>
+          {/* ── MARQUEE TICKER ── */}
+          <MarqueeTicker />
 
-            {/* Item 3 (Large) */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="col-span-2 border border-black bg-black p-4 rounded-lg flex flex-col justify-between h-32 md:h-full md:row-span-2 transition-all hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] text-white cursor-pointer"
+          {/* Spacer for content sections */}
+          <div className="max-w-7xl mx-auto px-6 md:px-10 w-full space-y-24 md:space-y-36 py-12 md:py-16">
+
+            {/* ── PHILOSOPHY ── */}
+            <motion.section
+              id="philosophy"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-8"
             >
-              <span className="font-mono text-[9px] text-neutral-500 font-bold">03</span>
-              <div>
-                <span className="inline-block bg-white/20 px-2 py-0.5 rounded text-[8px] font-sans font-bold uppercase tracking-wider mb-2">🏆 Hackathon Win</span>
-                <h4 className="font-serif font-black text-base text-white leading-tight">3rd Place — Robotics Hackathon</h4>
-                <p className="font-sans text-[10px] text-neutral-300 mt-1 leading-normal">Co-designed ROS2 autonomous rover swarm navigation system.</p>
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
+                <span>Something to Sit With</span>
+                <span className="text-neutral-400 font-bold uppercase tracking-wider">静寂</span>
               </div>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Robotics</span>
-            </motion.div>
 
-            {/* Item 4 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
+              <PhilosophyCarousel />
+            </motion.section>
+
+
+
+            {/* ── PROJECTS & BUILDS ── */}
+            <motion.section
+              id="projects"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-10"
             >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">04</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">Game Dev Outreach</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Leadership</span>
-            </motion.div>
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
+                <span>Projects & Builds</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Infinite Gallery</span>
+              </div>
 
-            {/* Item 5 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
+              <ProjectCarousel
+                projects={allProjects}
+                onSelectProject={(project) => setSelectedItem(project)}
+              />
+            </motion.section>
+
+            {/* ── WORK EXPERIENCE ── */}
+            <motion.section
+              id="works"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-10"
             >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">05</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">Sumobot — 4th Place</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Hardware</span>
-            </motion.div>
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
+                <span>Work Experience</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">From CV · verified</span>
+              </div>
 
-            {/* Item 6 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
-            >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">06</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">FAC — €50k Budget</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Governance</span>
-            </motion.div>
-
-            {/* Item 7 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
-            >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">07</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">IBCM FinCon '26</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Events</span>
-            </motion.div>
-
-            {/* Item 8 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
-            >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">08</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">Manufacturing Lab</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Production</span>
-            </motion.div>
-
-            {/* Item 9 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
-            >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">09</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">Mercator Strasse</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Community</span>
-            </motion.div>
-
-            {/* Item 10 */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="border border-[#d4d4d0] bg-white/40 p-4 rounded-lg flex flex-col justify-between h-32 transition-all hover:border-black hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] cursor-pointer"
-            >
-              <span className="font-mono text-[9px] text-neutral-400 font-bold">10</span>
-              <h4 className="font-serif font-bold text-sm text-neutral-900 leading-tight">3D Printed Parts</h4>
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase text-neutral-400 mt-2">Self-driven</span>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 5. CAPABILITIES SECTION */}
-        <section id="capabilities" className="space-y-8">
-          {/* Label Header */}
-          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
-            <span>Capabilities</span>
-            <span className="text-neutral-500">Hover: Scale, Border, Shadow</span>
-          </div>
-
-          {/* Grid Layout Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {capabilities.map((cap) => (
-              <motion.div
-                key={cap.id}
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                className={`relative border border-[#d4d4d0] bg-white/40 p-6 md:p-8 rounded-lg flex flex-col justify-between min-h-[220px] transition-all duration-300 hover:border-black hover:bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.12)] group ${
-                  cap.id === "front-eng" ? "md:scale-[1.02] border-black z-10 shadow-[0_0_20px_rgba(0,0,0,0.04)]" : ""
-                }`}
-                id={`capability-${cap.id}`}
-              >
-                {/* Custom active corner elements for frontend engineering highlight */}
-                {cap.id === "front-eng" && <CornerArrows className="text-black" />}
-
-                <div className="space-y-4">
-                  <h3 className="font-display font-black text-xl uppercase tracking-tight text-neutral-900">
-                    {cap.title}
-                  </h3>
-                  
-                  {/* Skills capsule row */}
-                  <div className="flex flex-wrap gap-2">
-                    {cap.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="font-sans font-bold text-[10px] tracking-wider uppercase text-neutral-800 border border-neutral-300 px-2 py-0.5 rounded-full bg-white/60"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <p className="font-sans text-xs text-neutral-600 leading-relaxed mt-6">
-                  {cap.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* 5. SELECTED EXPERIENCE SECTION */}
-        <section id="works" className="space-y-8">
-          {/* Label Header */}
-          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
-            <span>Selected Experience</span>
-            <span className="text-neutral-500">Hover: Scale, Border, Shadow / Click to Inspect</span>
-          </div>
-
-          {/* List Layout Cards */}
-          <div className="space-y-6">
-            {experiences.map((exp) => (
-              <motion.div
-                key={exp.id}
-                whileHover={{ y: -4 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                onClick={() => setActiveExperience(exp)}
-                className="relative border border-[#d4d4d0] bg-white/40 p-6 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition-all duration-300 hover:border-black hover:bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.12)] cursor-pointer group"
-                id={`experience-${exp.id}`}
-              >
-                {/* Left Brand Badge */}
-                <div className="flex items-center gap-6">
-                  {exp.logoType === "ts" ? (
-                    <TSMonogram className="w-16 h-16 rounded shadow-sm text-black bg-white border border-[#d4d4d0] flex-shrink-0" />
-                  ) : (
-                    <div className="p-2 border border-[#d4d4d0] rounded bg-white shadow-sm flex-shrink-0">
-                      <ConstructorUniversityLogo className="h-12 w-auto text-black" />
+              <div className="space-y-6">
+                {experiences.map((exp) => (
+                  <motion.div
+                    key={exp.id}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative border border-[#d4d4d0] bg-white/40 p-8 md:p-12 rounded-2xl transition-all duration-500 ease-[var(--ease-fluid)] hover:border-black hover:bg-white hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.12)] group will-change-transform"
+                    id={`experience-${exp.id}`}
+                  >
+                    {/* Header row */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+                      <div>
+                        <h3 className="font-display font-black text-2xl uppercase tracking-tight text-neutral-900">
+                          {exp.company}
+                        </h3>
+                        <p className="font-sans font-bold text-sm text-black mt-1">
+                          {exp.role} •{" "}
+                          <span className="font-semibold text-neutral-500">{exp.period}</span>
+                        </p>
+                        <p className="font-sans text-xs text-neutral-400 mt-1">{exp.location}</p>
+                      </div>
+                      {exp.link ? (
+                        <a
+                          href={exp.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`View ${exp.company}`}
+                          className="p-2 rounded-full border border-[#d4d4d0] text-black hover:border-black hover:bg-black hover:text-white transition-all flex-shrink-0 cursor-pointer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ArrowRight className="w-4 h-4" />
+                        </a>
+                      ) : (
+                        <div className="p-2 rounded-full border border-[#d4d4d0] text-black group-hover:border-black group-hover:bg-black group-hover:text-white transition-all flex-shrink-0">
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      )}
                     </div>
-                  )}
 
-                  {/* Mid Title Details */}
-                  <div className="space-y-1">
-                    <h3 className="font-display font-bold text-lg uppercase tracking-tight text-neutral-900 group-hover:opacity-80 transition-colors">
-                      {exp.company}
-                    </h3>
-                    <p className="font-sans font-bold text-xs text-black">
-                      {exp.role} • <span className="font-semibold text-neutral-500">{exp.period}</span>
-                    </p>
-                  </div>
-                </div>
+                    {/* Summary */}
+                    <p className="font-sans text-base text-neutral-600 leading-relaxed mb-4">{exp.summary}</p>
 
-                {/* Right Description summary */}
-                <div className="flex-1 sm:max-w-md md:max-w-xl text-left">
-                  <p className="font-sans text-xs text-neutral-600 leading-relaxed">
-                    {exp.summary}
-                  </p>
-                  
-                  {/* Highlights preview */}
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {exp.technologies.slice(0, 3).map((tech) => (
-                      <span
-                        key={tech}
-                        className="font-sans text-[9px] uppercase tracking-wider bg-white border border-[#d4d4d0] text-neutral-600 px-2 py-0.5 rounded"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    <span className="font-sans text-[9px] uppercase font-bold tracking-wider text-neutral-400">
-                      +{exp.technologies.length - 3} More
-                    </span>
-                  </div>
-                </div>
+                    {/* Bullets */}
+                    <ul className="space-y-2 mb-6">
+                      {exp.description.map((bullet, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 bg-black rounded-full mt-2 flex-shrink-0" />
+                          <p className="font-sans text-sm text-neutral-500 leading-relaxed">{bullet}</p>
+                        </li>
+                      ))}
+                    </ul>
 
-                {/* Inspect Button indicator */}
-                <div className="p-2 rounded-full border border-[#d4d4d0] text-black group-hover:border-black group-hover:bg-black group-hover:text-white transition-all self-end sm:self-auto flex-shrink-0">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* 6. PROCESS LOOP SECTION */}
-        <section id="process" className="space-y-8 pt-6">
-          {/* Label Header */}
-          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
-            <span>The Loop</span>
-            <span className="text-neutral-500">Narrative Engineering Process Diagram</span>
-          </div>
-
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 border border-[#d4d4d0] bg-white/40 rounded-lg p-8 md:p-12 relative overflow-hidden">
-            {/* Background design elements */}
-            <div className="absolute top-0 right-0 opacity-5 pointer-events-none translate-x-12 -translate-y-12">
-              <span className="font-serif font-black text-[20vw] uppercase text-black select-none">LOOP</span>
-            </div>
-
-            {/* Narrative text Column */}
-            <div className="max-w-md space-y-4 text-left">
-              <span className="font-mono text-[9px] tracking-widest uppercase text-neutral-400 font-bold">Process Methodology</span>
-              <h3 className="font-display font-black text-3xl uppercase tracking-tight text-neutral-900 leading-none">
-                THE LOOP
-              </h3>
-              <p className="font-sans text-xs text-neutral-600 leading-relaxed">
-                I do not view engineering as a linear path, but rather a recursive circle of structured investigation. 
-                Each step in my build sequence informs the next, validating hypotheses before committing to production.
-              </p>
-              <div className="pt-4 border-t border-[#d4d4d0]/60 space-y-2">
-                <p className="font-sans text-[11px] leading-relaxed text-neutral-500 font-bold italic">
-                  "To muddle through with excellence is better than to plan with mediocrity."
-                </p>
-                <span className="font-sans text-[10px] uppercase font-bold text-neutral-400">— Barbara Johnson</span>
+                    {/* Tech tags */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {exp.technologies.map((tech) => (
+                        <span
+                          key={tech}
+                          className="font-sans text-xs uppercase tracking-wider bg-white border border-[#d4d4d0] text-neutral-600 px-2.5 py-1 rounded"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </div>
+            </motion.section>
 
-            {/* SVG Interactive Loop Diagram Column */}
-            <div className="flex-1 w-full flex items-center justify-center min-h-[440px]">
-              <svg viewBox="0 0 500 420" className="w-full max-w-[480px] h-auto drop-shadow-sm" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                    <polygon points="0 0, 8 3, 0 6" fill="#111111"/>
-                  </marker>
-                </defs>
+            {/* ── CAPABILITIES ── */}
+            <motion.section
+              id="capabilities"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-10"
+            >
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
+                <span>Capabilities</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Core domains</span>
+              </div>
 
-                {/* ANIMATED LINES: Main flow */}
-                <motion.line
-                  x1="250" y1="50" x2="250" y2="80"
-                  stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3, duration: 0.4 }}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {capabilities.map((cap) => (
+                  <motion.div
+                    key={cap.id}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="capability-item relative border border-[#d4d4d0] bg-white/40 p-8 rounded-2xl flex flex-col justify-between min-h-[240px] transition-all duration-500 ease-[var(--ease-fluid)] hover:border-black hover:bg-white hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.12)] group will-change-transform"
+                    id={`capability-${cap.id}`}
+                  >
+                    <div className="space-y-4">
+                      <h3 className="font-display font-black text-2xl uppercase tracking-tight text-neutral-900">
+                        {cap.title}
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {cap.skills.map((skill) => (
+                          <span
+                            key={skill}
+                            className="font-sans font-bold text-xs tracking-wider uppercase text-neutral-800 border border-neutral-300 px-3 py-1 rounded-full bg-white/60"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="font-sans text-base text-neutral-600 leading-relaxed mt-6">{cap.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
 
-                <motion.line
-                  x1="250" y1="120" x2="250" y2="150"
-                  stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 1.1, duration: 0.4 }}
-                />
+            {/* ── BUCKET LIST ── */}
+            <motion.section
+              id="bucket"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-10"
+            >
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
+                <span>Bucket List</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Interactive goals</span>
+              </div>
 
-                <motion.line
-                  x1="250" y1="190" x2="250" y2="220"
-                  stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 1.9, duration: 0.4 }}
-                />
+              <BucketList />
+            </motion.section>
 
-                <motion.line
-                  x1="250" y1="260" x2="250" y2="290"
-                  stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 2.7, duration: 0.4 }}
-                />
+            {/* ── CONNECT CTA ── */}
+            <motion.section
+              id="connect"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-8"
+            >
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
+                <span>Connect</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Let's talk</span>
+              </div>
 
-                <motion.line
-                  x1="250" y1="330" x2="250" y2="365"
-                  stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 3.5, duration: 0.4 }}
-                />
-
-                {/* ANIMATED LINES: Branch lines */}
-                <motion.line
-                  x1="305" y1="100" x2="360" y2="100"
-                  stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.9, duration: 0.3 }}
-                />
-
-                <motion.line
-                  x1="305" y1="310" x2="360" y2="310"
-                  stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 3.1, duration: 0.3 }}
-                />
-
-                {/* ANIMATED LINES: Loop-back curved arrow */}
-                <motion.path
-                  d="M 450 310 Q 480 310, 480 200 Q 480 100, 305 100"
-                  fill="none" stroke="#111111" strokeWidth="1.5"
-                  markerEnd="url(#arrowhead)"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 3.9, duration: 0.8 }}
-                />
-
-                {/* MAIN PATH NODES */}
-                {/* Observe */}
-                <motion.rect
-                  x="195" y="10" width="110" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#ffffff", stroke: "#111111" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 }}
-                  className="cursor-pointer hover:bg-neutral-50 transition-colors"
-                />
-                <text x="250" y="34" textAnchor="middle" className="font-mono text-[10px] font-bold tracking-widest fill-black pointer-events-none">OBSERVE</text>
-
-                {/* Search */}
-                <motion.rect
-                  x="195" y="80" width="110" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#ffffff", stroke: "#111111" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.7 }}
-                  className="cursor-pointer"
-                />
-                <text x="250" y="104" textAnchor="middle" className="font-mono text-[10px] font-bold tracking-widest fill-black pointer-events-none">SEARCH</text>
-
-                {/* Question */}
-                <motion.rect
-                  x="195" y="150" width="110" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#ffffff", stroke: "#111111" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 1.5 }}
-                  className="cursor-pointer"
-                />
-                <text x="250" y="174" textAnchor="middle" className="font-mono text-[10px] font-bold tracking-widest fill-black pointer-events-none">QUESTION</text>
-
-                {/* Prototype */}
-                <motion.rect
-                  x="195" y="220" width="110" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#ffffff", stroke: "#111111" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 2.3 }}
-                  className="cursor-pointer"
-                />
-                <text x="250" y="244" textAnchor="middle" className="font-mono text-[10px] font-bold tracking-widest fill-black pointer-events-none">PROTOTYPE</text>
-
-                {/* Test */}
-                <motion.rect
-                  x="195" y="290" width="110" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#ffffff", stroke: "#111111" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 3.1 }}
-                  className="cursor-pointer"
-                />
-                <text x="250" y="314" textAnchor="middle" className="font-mono text-[10px] font-bold tracking-widest fill-black pointer-events-none">TEST</text>
-
-                {/* Ship */}
-                <motion.rect
-                  x="195" y="365" width="110" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#000000", stroke: "#000000" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 3.8 }}
-                  className="cursor-pointer"
-                />
-                <text x="250" y="389" textAnchor="middle" className="font-mono text-[10px] font-bold tracking-widest fill-white pointer-events-none">SHIP</text>
-
-                {/* BRANCH NODES */}
-                {/* Follow Proven Path */}
-                <motion.rect
-                  x="360" y="80" width="130" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#ffffff", stroke: "#111111" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 1.1 }}
-                />
-                <text x="425" y="99" textAnchor="middle" className="font-sans text-[8px] font-black fill-black pointer-events-none">FOLLOW PROVEN</text>
-                <text x="425" y="111" textAnchor="middle" className="font-sans text-[8px] font-black fill-black pointer-events-none">PATH</text>
-
-                {/* Break? */}
-                <motion.rect
-                  x="360" y="290" width="90" height="40" rx="6"
-                  initial={{ fill: "#ffffff", stroke: "#d4d4d0" }}
-                  whileInView={{ fill: "#ffffff", stroke: "#111111" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 3.3 }}
-                />
-                <text x="405" y="314" textAnchor="middle" className="font-mono text-[9px] font-bold fill-black pointer-events-none">BREAK?</text>
-
-                {/* Labels & Subtexts */}
-                <text x="312" y="93" className="font-sans text-[7px] font-bold fill-neutral-400 pointer-events-none">no better idea</text>
-                <text x="312" y="303" className="font-sans text-[7px] font-bold fill-neutral-400 pointer-events-none">fails?</text>
-                <text x="430" y="200" className="font-sans text-[7px] font-bold fill-neutral-400 pointer-events-none text-right">loop back</text>
-              </svg>
-            </div>
-          </div>
-        </section>
-
-        {/* 7. BEYOND DESIGN SECTION */}
-        <section id="beyond" className="space-y-8">
-          {/* Label Header */}
-          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
-            <span>Beyond Design</span>
-            <span className="text-neutral-500">Hover: Zoom & Caption Overlay</span>
-          </div>
-
-          {/* 3 Column Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {beyondItems.map((item) => (
-              <motion.div
-                key={item.id}
-                whileHover={{ y: -6 }}
-                className="relative aspect-[3/4] border border-[#d4d4d0] bg-white rounded-lg overflow-hidden group shadow-sm flex flex-col justify-end"
-                id={`beyond-${item.id}`}
-              >
-                {/* Image background with grayscale styling */}
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 brightness-75 group-hover:scale-110 group-hover:contrast-125 group-hover:brightness-90 transition-all duration-700 pointer-events-none"
-                  referrerPolicy="no-referrer"
-                />
-
-                {/* Hover overlay mask */}
-                <div className="absolute inset-0 bg-neutral-950/45 opacity-100 group-hover:opacity-85 group-hover:bg-neutral-950/90 transition-all duration-500" />
-
-                {/* Caption labels */}
-                <div className="relative p-6 text-white z-10 flex flex-col justify-end h-full">
-                  
-                  {/* Category Pill Tag */}
-                  <span className="font-sans font-bold text-[9px] uppercase tracking-widest text-black border border-white/40 px-2 py-0.5 rounded-full w-max bg-white/80 mb-2">
-                    {item.category}
-                  </span>
-
-                  {/* Title */}
-                  <h3 className="font-display font-black text-xl uppercase tracking-tight">
-                    {item.title}
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 border border-[#d4d4d0] bg-white/40 rounded-2xl p-10 md:p-16">
+                <div className="space-y-3 max-w-lg">
+                  <h3 className="font-display font-black text-3xl md:text-5xl uppercase tracking-tight text-neutral-900 leading-[1.1]">
+                    I arrived with 4 suitcases and a dream.
                   </h3>
-
-                  {/* Description - Slides up on hover */}
-                  <div className="max-h-0 opacity-0 overflow-hidden group-hover:max-h-[100px] group-hover:opacity-100 group-hover:mt-3 transition-all duration-500 ease-out">
-                    <p className="font-sans text-xs text-neutral-300 leading-relaxed">
-                      {item.description}
-                    </p>
+                  <p className="font-sans text-lg text-neutral-600 leading-relaxed">
+                    Currently accepting opportunities for engineering internships, research collaborations, and
+                    mentorship. Based in Bremen, Germany.
+                  </p>
+                  <div className="flex items-center gap-2 pt-2">
+                    <Mail className="w-4 h-4 text-black" />
+                    <a
+                      href="mailto:hoangnguyenkhoi07@gmail.com"
+                      className="font-sans text-sm font-bold text-black underline hover:opacity-70 transition-opacity"
+                    >
+                      hoangnguyenkhoi07@gmail.com
+                    </a>
                   </div>
                 </div>
 
-                {/* Subtle visual link marker */}
-                <div className="absolute top-4 right-4 p-2 rounded-full border border-black/20 text-black opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-90 transition-all duration-300 z-20 bg-white/80">
-                  <Info className="w-4 h-4" />
+                <div className="flex flex-col gap-3 w-full sm:w-auto">
+                  <button
+                    onClick={() => setIsContactOpen(true)}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    className="px-8 py-4 bg-black text-white font-sans font-bold text-sm tracking-widest uppercase rounded hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                  >
+                    Send Message
+                  </button>
+                  <a
+                    href="https://www.linkedin.com/in/hoangnguyenkhoi/"
+                    target="_blank"
+                    rel="noreferrer"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    className="flex items-center justify-center gap-2 px-8 py-4 border border-[#d4d4d0] font-sans font-bold text-sm tracking-widest uppercase text-neutral-800 rounded hover:border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transition-all"
+                  >
+                    LinkedIn <ArrowUpRight className="w-4 h-4" />
+                  </a>
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            </motion.section>
           </div>
-        </section>
+        </main>
 
-      </main>
+        {/* ── FOOTER ── */}
+        <footer className="w-full bg-[#FAF9F6] border-t border-[#d4d4d0] mt-8">
+          <div className="max-w-7xl mx-auto px-6 md:px-10 py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-neutral-600">
+            <div className="flex items-center gap-3">
+              <span className="font-serif font-black text-xl text-[#111111]">KH</span>
+              <p className="font-sans text-xs uppercase tracking-widest font-bold text-neutral-500">
+                © 2026 KHOI HOANG. ALL RIGHTS RESERVED.
+              </p>
+            </div>
 
-      {/* 7. FOOTER SECTION */}
-      <footer className="w-full bg-[#FAF9F6] border-t border-[#d4d4d0] mt-24">
-        <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-neutral-600">
-          
-          {/* Copyright notice */}
-          <div className="flex items-center gap-3">
-            <span className="font-serif font-black text-xl text-[#111111]">KH</span>
-            <p className="font-sans text-xs uppercase tracking-widest font-bold text-neutral-500">
-              © 2026 KHOI HOANG. ALL RIGHTS RESERVED.
-            </p>
+            <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] text-neutral-400">
+              <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">⌘K</kbd> command palette · <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">↑↑↓↓←→←→BA</kbd> secret code
+            </div>
+
+            <div className="flex items-center gap-8 text-xs font-sans font-bold uppercase tracking-wider">
+              <a href="https://www.linkedin.com/in/hoangnguyenkhoi/" target="_blank" rel="noreferrer" className="relative py-1 group hover:text-black transition-colors">
+                LinkedIn
+                <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
+              </a>
+              <a href="https://github.com/PlebHoang" target="_blank" rel="noreferrer" className="relative py-1 group hover:text-black transition-colors">
+                GitHub
+                <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
+              </a>
+            </div>
           </div>
+        </footer>
 
-          {/* Social Links */}
-          <div className="flex items-center gap-8 text-xs font-sans font-bold uppercase tracking-wider">
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              className="relative py-1 group hover:text-black transition-colors"
-            >
-              LinkedIn
-              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
-            </a>
+        {/* Design Grid Overlay */}
+        <DesignGrid isVisible={showGrid} />
 
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              className="relative py-1 group hover:text-black transition-colors"
-            >
-              GitHub
-              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
-            </a>
-
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              className="relative py-1 group hover:text-black transition-colors"
-            >
-              Instagram
-              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
-            </a>
-          </div>
-        </div>
-      </footer>
-
-      {/* INTERACTIVE COMPONENT LAYERS (MODAL / DRAWERS) */}
-      <AboutDrawer isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-      <ContactDrawer isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
-      <ExperienceModal experience={activeExperience} onClose={() => setActiveExperience(null)} />
-
-    </div>
+        {/* ── DRAWERS ── */}
+        <AboutDrawer isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+        <ContactDrawer isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+      </div>
+    </>
   );
 }

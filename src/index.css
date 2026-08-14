@@ -11,47 +11,95 @@
   --color-dark-bg: #F7F6F3;
 }
 
-/* Custom global styles to match the designer's cream paper theme */
+/* ─── Base ──────────────────────────────────────────────────────────────── */
+
 body {
   background-color: #F7F6F3;
   color: #111111;
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar matching the minimal palette */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────── */
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #F7F6F3;
 }
 ::-webkit-scrollbar-thumb {
   background: #d4d4d0;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #111111;
 }
 
-/* Outlined text styling */
-.text-outline {
-  -webkit-text-stroke: 2.5px #111111;
-  color: transparent;
+:root {
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* ─── Text/Cursor Utilities ────────────────────────────────────────────────── */
 
 .text-outline-thin {
   -webkit-text-stroke: 1px #111111;
   color: transparent;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+.has-custom-cursor,
+.has-custom-cursor *,
+.has-custom-cursor *::before,
+.has-custom-cursor *::after {
+  cursor: none !important;
 }
 
-/* Custom high-impact text utility */
-.text-bold-glow {
-  text-shadow: 0 0 40px rgba(255, 59, 0, 0.1);
+@media (pointer: coarse) {
+  .has-custom-cursor,
+  .has-custom-cursor *,
+  .has-custom-cursor *::before,
+  .has-custom-cursor *::after {
+    cursor: auto !important;
+  }
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+
+::selection {
+  background: #111111;
+  color: #F7F6F3;
+}
+
+/* ─── Smooth Focus ──────────────────────────────────────────────────────── */
+
+*:focus-visible {
+  outline: 1.5px solid #111111;
+  outline-offset: 2px;
+}
+
+/* ─── Marquee Animation ─────────────────────────────────────────────────── */
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
