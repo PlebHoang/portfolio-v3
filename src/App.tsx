@@ -484,7 +484,7 @@ export default function App() {
         <div className="pointer-events-none fixed inset-0 opacity-[0.018] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:24px_24px] z-40" />
 
         {/* ── HEADER ── */}
-        <motion.header style={{ boxShadow: headerShadow }} className="sticky top-0 w-full z-40 bg-[#F7F6F3]/80 backdrop-blur-md border-b border-[#d4d4d0]">
+        <motion.header style={{ boxShadow: headerShadow }} className="sticky top-0 w-full z-50 bg-[#F7F6F3]/80 backdrop-blur-md border-b border-[#d4d4d0]">
           <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
