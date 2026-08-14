@@ -5,7 +5,6 @@
 
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "motion/react";
-import { LiquidGlassBadge, LiquidButton, GlassFilter } from "./ui/liquid-glass-button";
 
 interface HeroSectionProps {
   onAboutOpen: () => void;
@@ -19,13 +18,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen }) => {
   const heroTextY = useTransform(scrollY, [0, 600], [0, 180]);
   const heroFaceY = useTransform(scrollY, [0, 600], [0, -40]);
   const heroFaceScale = useTransform(scrollY, [200, 600], [1.3, 1.5]);
-
-  // Scroll parallax for top badges and bottom value proposition dock
-  const heroChipsY = useTransform(scrollY, [0, 500], [0, 110]);
-  const heroChipsOpacity = useTransform(scrollY, [0, 300], [1, 0]);
-
-  const heroHudY = useTransform(scrollY, [0, 600], [0, 150]);
-  const heroHudOpacity = useTransform(scrollY, [0, 480], [1, 0.15]);
+  const heroBottomY = useTransform(scrollY, [0, 400], [0, 80]);
+  const heroBottomOpacity = useTransform(scrollY, [0, 240], [1, 0]);
 
   // Letter split configuration
   const firstRow = ["K", "H", "O", "I"];
@@ -106,21 +100,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen }) => {
       className="relative w-full overflow-hidden select-none bg-[#F7F6F3] flex items-center justify-center py-20"
       style={{ minHeight: "90vh" }}
     >
-      {/* Proof Chips - Dynamic scroll motion with liquid glass styling */}
-      <motion.div
-        style={{ y: heroChipsY, opacity: heroChipsOpacity }}
-        className="absolute top-6 left-1/2 -translate-x-1/2 flex flex-wrap justify-center gap-2.5 z-20 select-none w-full max-w-xl px-4 pointer-events-auto"
-      >
-        <LiquidGlassBadge className="text-[10px] tracking-wider py-1.5 px-3.5">
+      {/* Proof Chips */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 flex flex-wrap justify-center gap-2 z-40 select-none w-full max-w-xl px-4">
+        <span className="px-3 py-1 border border-[#d4d4d0] rounded-full bg-white/60 text-neutral-500 font-sans text-[10px] font-bold tracking-widest uppercase hover:border-black hover:text-black transition-colors">
           IEM Student
-        </LiquidGlassBadge>
-        <LiquidGlassBadge className="text-[10px] tracking-wider py-1.5 px-3.5">
+        </span>
+        <span className="px-3 py-1 border border-[#d4d4d0] rounded-full bg-white/60 text-neutral-500 font-sans text-[10px] font-bold tracking-widest uppercase hover:border-black hover:text-black transition-colors">
           Constructor University · Bremen
-        </LiquidGlassBadge>
-        <LiquidGlassBadge className="text-[10px] tracking-wider py-1.5 px-3.5">
+        </span>
+        <span className="px-3 py-1 border border-[#d4d4d0] rounded-full bg-white/60 text-neutral-500 font-sans text-[10px] font-bold tracking-widest uppercase hover:border-black hover:text-black transition-colors">
           First-Year Builder
-        </LiquidGlassBadge>
-      </motion.div>
+        </span>
+      </div>
 
       <div className="w-full max-w-7xl mx-auto px-6 md:px-10 h-full flex items-center justify-center relative min-h-[60vh] md:min-h-[75vh]">
         
@@ -223,46 +214,45 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen }) => {
 
       </div>
 
-      {/* Value Proposition & CTA Buttons - Dynamic scroll motion with liquid glass styling */}
+      {/* Value Proposition & CTA Buttons */}
       <motion.div
-        style={{ y: heroHudY, opacity: heroHudOpacity }}
-        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 select-none w-full max-w-xl px-4 pointer-events-auto"
+        style={{
+          y: heroBottomY,
+          opacity: heroBottomOpacity,
+        }}
+        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-25 flex flex-col items-center gap-3.5 select-none w-full max-w-xl px-4 will-change-transform"
       >
-        <div className="relative inline-flex items-center justify-center rounded-full px-6 py-2.5 text-center transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
-          <div className="absolute top-0 left-0 z-0 h-full w-full rounded-full 
-              bg-white/60 backdrop-blur-xl
-              shadow-[0_4px_20px_rgba(0,0,0,0.04),inset_1px_1px_1px_0px_rgba(255,255,255,0.95),inset_-1px_-1px_1px_0px_rgba(0,0,0,0.08),inset_0_0_8px_2px_rgba(255,255,255,0.6)] 
-              border border-white/80" />
-          <div
-            className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-full"
-            style={{ backdropFilter: 'url("#container-glass")' }}
-          />
-          <p className="relative pointer-events-none z-10 font-sans text-xs sm:text-[13px] text-neutral-800 font-medium tracking-tight">
-            Diagnosing broken bottlenecks, cutting the noise, and engineering working systems.
-          </p>
-          <GlassFilter />
+        {/* Liquid Glass Pill */}
+        <div className="relative group overflow-hidden rounded-full p-[1px] shadow-[0_8px_32px_0_rgba(0,0,0,0.06),0_2px_8px_0_rgba(0,0,0,0.04)] transition-all duration-500 hover:shadow-[0_12px_36px_0_rgba(0,0,0,0.1)]">
+          {/* Specular border sheen */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/95 via-white/40 to-white/10 pointer-events-none" />
+          
+          {/* Liquid Glass Container */}
+          <div className="relative backdrop-blur-xl bg-[#F7F6F3]/80 border border-white/70 px-5 py-2 sm:py-2.5 rounded-full flex items-center gap-2.5 shadow-[inset_0_1.5px_2px_0_rgba(255,255,255,0.95),inset_0_-1px_2px_0_rgba(0,0,0,0.06),inset_0_0_16px_rgba(255,255,255,0.5)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-black/80 animate-pulse flex-shrink-0" />
+            <p className="font-sans text-xs sm:text-[13px] text-neutral-800 font-semibold tracking-tight">
+              Diagnosing broken bottlenecks, cutting the noise, and engineering working systems.
+            </p>
+          </div>
         </div>
 
+        {/* Action Buttons */}
         <div className="flex gap-3 pt-0.5">
-          <LiquidButton
+          <button
             onClick={() => {
               const el = document.getElementById("works");
               if (el) el.scrollIntoView({ behavior: "smooth" });
             }}
-            variant="dark"
-            size="md"
-            className="rounded-full font-sans text-[11px] font-bold tracking-widest uppercase px-6 py-2.5 shadow-sm"
+            className="px-6 py-2.5 bg-black text-white font-sans text-[11px] font-bold tracking-widest uppercase rounded hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
           >
             View Work
-          </LiquidButton>
-          <LiquidButton
+          </button>
+          <button
             onClick={onAboutOpen}
-            variant="default"
-            size="md"
-            className="rounded-full font-sans text-[11px] font-bold tracking-widest uppercase px-6 py-2.5 bg-white/80 shadow-sm"
+            className="px-6 py-2.5 border border-[#d4d4d0] bg-white text-black font-sans text-[11px] font-bold tracking-widest uppercase rounded hover:border-black hover:bg-neutral-50 transition-colors cursor-pointer"
           >
             About Me
-          </LiquidButton>
+          </button>
         </div>
       </motion.div>
 
