@@ -220,17 +220,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen }) => {
           y: heroBottomY,
           opacity: heroBottomOpacity,
         }}
-        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-25 flex flex-col items-center gap-3.5 select-none w-full max-w-xl px-4 will-change-transform"
+        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-25 flex flex-col items-center gap-3.5 select-none w-full max-w-2xl px-4 will-change-transform"
       >
         {/* Liquid Glass Pill */}
-        <div className="relative group overflow-hidden rounded-full p-[1px] shadow-[0_8px_32px_0_rgba(0,0,0,0.06),0_2px_8px_0_rgba(0,0,0,0.04)] transition-all duration-500 hover:shadow-[0_12px_36px_0_rgba(0,0,0,0.1)]">
+        <div className="relative group overflow-hidden rounded-full p-[1px] shadow-[0_8px_32px_0_rgba(0,0,0,0.06),0_2px_8px_0_rgba(0,0,0,0.04)] transition-all duration-500 hover:shadow-[0_12px_36px_0_rgba(0,0,0,0.1)] max-w-full">
           {/* Specular border sheen */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/95 via-white/40 to-white/10 pointer-events-none" />
           
           {/* Liquid Glass Container */}
-          <div className="relative backdrop-blur-xl bg-[#F7F6F3]/80 border border-white/70 px-5 py-2 sm:py-2.5 rounded-full flex items-center gap-2.5 shadow-[inset_0_1.5px_2px_0_rgba(255,255,255,0.95),inset_0_-1px_2px_0_rgba(0,0,0,0.06),inset_0_0_16px_rgba(255,255,255,0.5)]">
+          <div className="relative backdrop-blur-xl bg-[#F7F6F3]/80 border border-white/70 px-6 py-2 sm:py-2.5 rounded-full flex items-center justify-center gap-2.5 shadow-[inset_0_1.5px_2px_0_rgba(255,255,255,0.95),inset_0_-1px_2px_0_rgba(0,0,0,0.06),inset_0_0_16px_rgba(255,255,255,0.5)]">
             <span className="w-1.5 h-1.5 rounded-full bg-black/80 animate-pulse flex-shrink-0" />
-            <p className="font-sans text-xs sm:text-[13px] text-neutral-800 font-semibold tracking-tight">
+            <p className="font-sans text-xs sm:text-[13px] md:text-sm text-neutral-800 font-semibold tracking-tight whitespace-nowrap text-center">
               Diagnosing broken bottlenecks, cutting the noise, and engineering working systems.
             </p>
           </div>
