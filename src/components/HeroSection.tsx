@@ -212,23 +212,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen }) => {
 
       </div>
 
-      {/* CTA Buttons */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-40 flex gap-4 select-none">
-        <button
-          onClick={() => {
-            const el = document.getElementById("works");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
-          }}
-          className="px-6 py-3 bg-black text-white font-sans text-[11px] font-bold tracking-widest uppercase hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
-        >
-          View Work
-        </button>
-        <button
-          onClick={onAboutOpen}
-          className="px-6 py-3 border border-[#d4d4d0] bg-white text-black font-sans text-[11px] font-bold tracking-widest uppercase hover:border-black hover:bg-neutral-50 transition-colors cursor-pointer"
-        >
-          About Me
-        </button>
+      {/* Value Proposition & CTA Buttons */}
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-4 select-none w-full max-w-xl px-4">
+        <p className="text-center font-sans text-xs sm:text-sm text-neutral-600 font-medium leading-relaxed max-w-lg">
+          First-year IEM student at Constructor University. I like taking messy, manual problems and engineering working systems out of them.
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={() => {
+              const el = document.getElementById("works");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="px-6 py-3 bg-black text-white font-sans text-[11px] font-bold tracking-widest uppercase hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
+          >
+            View Work
+          </button>
+          <button
+            onClick={onAboutOpen}
+            className="px-6 py-3 border border-[#d4d4d0] bg-white text-black font-sans text-[11px] font-bold tracking-widest uppercase hover:border-black hover:bg-neutral-50 transition-colors cursor-pointer"
+          >
+            About Me
+          </button>
+        </div>
       </div>
 
       {/* Bottom gradient fade into page */}

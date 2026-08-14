@@ -3,13 +3,13 @@ import React from "react";
 export const MarqueeTicker: React.FC = () => {
   const items = [
     "Solar Circuit Design",
-    "Robotics & CAD",
-    "Docker Pipelines",
-    "Green Finance",
-    "Supply Chain Modeling",
-    "3D Printing",
-    "ESP Mesh Telemetry",
+    "Industrial IoT",
+    "Supply Chain Simulation",
+    "Docker & Automation",
     "Fusion 360",
+    "Rapid 3D Prototyping",
+    "ESP Mesh Telemetry",
+    "Green Finance Strategy",
   ];
 
   return (

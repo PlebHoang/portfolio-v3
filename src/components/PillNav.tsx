@@ -8,7 +8,7 @@ export const PillNav: React.FC<PillNavProps> = ({ onOpenPalette }) => {
   const [visible, setVisible] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
 
-  const sections = ["hero", "philosophy", "projects", "works", "capabilities", "bucket", "connect"];
+  const sections = ["hero", "works", "projects", "capabilities", "philosophy", "bucket", "connect"];
 
   useEffect(() => {
     const handleScroll = () => {

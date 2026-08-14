@@ -62,38 +62,17 @@ interface YearOneItem {
 
 const experiences: Experience[] = [
   {
-    id: "dk-engineering",
-    role: "Engineering Intern",
-    company: "DK Engineering Ltd.",
-    location: "Onsite, Ha Noi, Vietnam",
-    period: "Oct 2024",
-    summary:
-      "Drew the power extraction circuit for a 1 MW (7,000 m²) commercial solar deployment and monitored live AI/IoT factory telemetry during industrial operations.",
-    description: [
-      "Mapped electrical circuit schematics for extracting and routing power from a 7,000 m² solar panel array rated at 1 MW capacity.",
-      "Coordinated technical specifications across contractors and construction teams for renewable energy installation projects.",
-      "Spotted an anomalous valve pressure spike on live AI/IoT sensor telemetry, triggering immediate preventative maintenance at the factory.",
-    ],
-    technologies: [
-      "Solar Circuit Design",
-      "Industrial IoT",
-      "Sensor Telemetry",
-      "Electrical Schematics",
-    ],
-    link: "https://docs.google.com/document/d/1sT7qXY-lAWTg8jxPSdger41W5dxy_NhA/edit?usp=sharing&ouid=105069165714848853856&rtpof=true&sd=true",
-  },
-  {
     id: "sequoia-sky",
-    role: "Grant Seeker",
+    role: "Grant Seeker & Capital Strategy",
     company: "Sequoia Sky Ltd. Co.",
     location: "Remote, Ho Chi Minh City, Vietnam",
     period: "Mar – Jun 2024",
     summary:
-      "Created the first structured grant-seeking pipeline for an ESG non-profit with zero internal fundraising bandwidth, mapping 7 funding channels targeting $300k in green finance.",
+      "Built a structured funding pipeline for an early-stage ESG non-profit, mapping 7 green finance channels into an actionable $300k capital roadmap.",
     description: [
-      "Identified and catalogued 7 high-potential funding channels across green bonds, green finance instruments, and traditional grant mechanisms.",
-      "Assembled a comprehensive Excel tracking system covering donor eligibility, compliance requirements, and application timelines into an actionable $300k capital roadmap.",
-      "Briefed the CEO on strategic pivot from grants to green bond/green finance instruments, establishing the company's first structured capital pipeline.",
+      "Researched sustainable finance mechanisms after noticing traditional grants were resulting in repeated rejections for their operational stage.",
+      "Mapped 7 viable funding channels across green bonds and blended finance instruments with detailed eligibility and compliance criteria.",
+      "Delivered a comprehensive Excel tracking model and briefed the CEO on a strategic pivot toward green finance instruments.",
     ],
     technologies: [
       "Green Finance",
@@ -104,17 +83,38 @@ const experiences: Experience[] = [
     link: "https://drive.google.com/file/d/1KSDwA7mydbGayWU0AfEb8TuQd2ujGmxW/view?usp=sharing",
   },
   {
+    id: "dk-engineering",
+    role: "Engineering Intern",
+    company: "DK Engineering Ltd.",
+    location: "Onsite, Ha Noi, Vietnam",
+    period: "Oct 2024",
+    summary:
+      "Drafted electrical power extraction schematics for a 1 MW (7,000 m²) commercial solar array and monitored live industrial IoT sensor telemetry.",
+    description: [
+      "Mapped circuit extraction and routing schematics across contractor and construction specifications for a 1 MW solar deployment.",
+      "Monitored live AI and IoT sensor telemetry across active factory machinery.",
+      "Identified an unexpected pressure anomaly on a pipeline valve in time for preventative maintenance, preventing floor downtime.",
+    ],
+    technologies: [
+      "Solar Circuit Design",
+      "Industrial IoT",
+      "Sensor Telemetry",
+      "Electrical Schematics",
+    ],
+    link: "https://docs.google.com/document/d/1sT7qXY-lAWTg8jxPSdger41W5dxy_NhA/edit?usp=sharing&ouid=105069165714848853856&rtpof=true&sd=true",
+  },
+  {
     id: "student-gov",
     role: "Advisor / President / Vice President",
     company: "Student Government, EMASI Van Phuc",
     location: "Onsite, Ho Chi Minh City, Vietnam",
     period: "Aug 2022 – Jun 2025",
     summary:
-      "Fixed broken internal communications across 30+ members, launched a PR channel that outperformed the official school page, and self-funded Prom by raising ~40M VND ($2,000) in 14 days.",
+      "Restructured internal operations across 30+ members, built an organic PR channel, and raised ~40M VND ($2,000) in 14 days to fully self-fund Prom.",
     description: [
-      "Standardized team operations on Google Docs/Teams with weekly cadence, transforming fragmented group chats into reliable bi-monthly event execution.",
-      "Launched an organic PR/podcast channel that generated more interactions than the official school media page.",
-      "Organized an independent student-run product fundraiser (handmade food & drinks) that raised ~40,000,000 VND ($2,000 USD) in 14 days to self-fund the annual Prom.",
+      "Moved team execution from scattered group chats to weekly structured agendas on Google Docs and Teams, establishing a reliable bi-monthly event cadence.",
+      "Launched an organic student media and podcast channel that outperformed the official school page in audience engagement.",
+      "Organized an independent campus food and beverage fundraiser over two weeks to self-fund the annual Prom without school budget.",
     ],
     technologies: [
       "Crisis Management",
@@ -203,25 +203,32 @@ const allProjects: CarouselProject[] = [
 
 const capabilities = [
   {
-    id: "robotics",
-    title: "Robotics & Hardware",
-    skills: ["Fusion 360", "3D Printing", "Arduino", "Sumobot"],
-    description:
-      "Designing mechanical enclosures, custom hardware prototypes, and rapid physical iteration from CAD to print.",
-  },
-  {
     id: "industrial-eng",
-    title: "Industrial Engineering",
+    title: "Industrial Engineering & Operations",
     skills: ["Supply Chain", "Factory Design", "Lean MTM/BOM", "Operations"],
     description:
-      "Optimising manufacturing processes, modelling facility layouts, and simulating dynamic production networks.",
+      "Optimizing manufacturing processes, modeling facility layouts, and simulating dynamic production networks under real constraints.",
   },
   {
     id: "software-sys",
     title: "Software & Automation",
     skills: ["Python", "Docker", "Gemini API", "TypeScript/Bun"],
     description:
-      "Building containerised automation pipelines, AI-integrated tools, and full-stack applications.",
+      "Building containerized automation pipelines, LLM-integrated workflows, and reliable full-stack developer tools.",
+  },
+  {
+    id: "robotics",
+    title: "Hardware Prototyping & CAD",
+    skills: ["Fusion 360", "3D Printing", "Arduino", "ESP Mesh"],
+    description:
+      "Designing mechanical enclosures, rapid 3D prototyping, and programming microcontrollers for offline telemetry.",
+  },
+  {
+    id: "sustainability",
+    title: "Sustainability & Energy Systems",
+    skills: ["Solar Circuit Design", "ESG Frameworks", "Green Finance", "Sensors"],
+    description:
+      "Mapping solar power extraction schematics, researching ESG compliance, and structuring green capital roadmaps.",
   },
 ];
 
@@ -304,7 +311,7 @@ export default function App() {
 
   // Active section scroll tracking
   useEffect(() => {
-    const sections = ["hero", "philosophy", "year-one", "projects", "works", "capabilities", "bucket", "connect"];
+    const sections = ["hero", "works", "projects", "capabilities", "philosophy", "bucket", "connect"];
     const handleScroll = () => {
       let current = "hero";
       for (const id of sections) {
@@ -561,46 +568,7 @@ export default function App() {
           {/* Spacer for content sections */}
           <div className="max-w-7xl mx-auto px-6 md:px-10 w-full space-y-24 md:space-y-36 py-12 md:py-16">
 
-            {/* ── PHILOSOPHY ── */}
-            <motion.section
-              id="philosophy"
-              variants={sectionReveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              className="space-y-8"
-            >
-              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
-                <span>Something to Sit With</span>
-                <span className="text-neutral-400 font-bold uppercase tracking-wider">静寂</span>
-              </div>
-
-              <PhilosophyCarousel />
-            </motion.section>
-
-
-
-            {/* ── PROJECTS & BUILDS ── */}
-            <motion.section
-              id="projects"
-              variants={sectionReveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              className="space-y-10"
-            >
-              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
-                <span>Projects & Builds</span>
-                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Infinite Gallery</span>
-              </div>
-
-              <ProjectCarousel
-                projects={allProjects}
-                onSelectProject={(project) => setSelectedItem(project)}
-              />
-            </motion.section>
-
-            {/* ── WORK EXPERIENCE ── */}
+            {/* ── REAL-WORLD EXPERIENCE ── */}
             <motion.section
               id="works"
               variants={sectionReveal}
@@ -610,8 +578,8 @@ export default function App() {
               className="space-y-10"
             >
               <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
-                <span>Work Experience</span>
-                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">From CV · verified</span>
+                <span>Real-World Experience</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Problems Solved · Verified</span>
               </div>
 
               <div className="space-y-6">
@@ -682,7 +650,27 @@ export default function App() {
               </div>
             </motion.section>
 
-            {/* ── CAPABILITIES ── */}
+            {/* ── PROJECTS & BUILDS ── */}
+            <motion.section
+              id="projects"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-10"
+            >
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
+                <span>Projects & Builds</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Infinite Gallery</span>
+              </div>
+
+              <ProjectCarousel
+                projects={allProjects}
+                onSelectProject={(project) => setSelectedItem(project)}
+              />
+            </motion.section>
+
+            {/* ── CORE CAPABILITIES ── */}
             <motion.section
               id="capabilities"
               variants={sectionReveal}
@@ -692,11 +680,11 @@ export default function App() {
               className="space-y-10"
             >
               <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
-                <span>Capabilities</span>
-                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Core domains</span>
+                <span>Core Capabilities</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">4 Core Domains</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {capabilities.map((cap) => (
                   <motion.div
                     key={cap.id}
@@ -726,6 +714,23 @@ export default function App() {
               </div>
             </motion.section>
 
+            {/* ── PHILOSOPHY ── */}
+            <motion.section
+              id="philosophy"
+              variants={sectionReveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="space-y-8"
+            >
+              <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-xs font-sans font-bold tracking-widest text-black uppercase">
+                <span>Something to Sit With</span>
+                <span className="text-neutral-400 font-bold uppercase tracking-wider">静寂</span>
+              </div>
+
+              <PhilosophyCarousel />
+            </motion.section>
+
             {/* ── BUCKET LIST ── */}
             <motion.section
               id="bucket"
@@ -737,7 +742,7 @@ export default function App() {
             >
               <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
                 <span>Bucket List</span>
-                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Interactive goals</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Interactive Goals</span>
               </div>
 
               <BucketList />
@@ -754,7 +759,7 @@ export default function App() {
             >
               <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-3 text-sm font-sans font-medium tracking-widest text-black uppercase">
                 <span>Connect</span>
-                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Let's talk</span>
+                <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Opportunities</span>
               </div>
 
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 border border-[#d4d4d0] bg-white/40 rounded-2xl p-10 md:p-16">
@@ -763,8 +768,7 @@ export default function App() {
                     I arrived with 4 suitcases and a dream.
                   </h3>
                   <p className="font-sans text-lg text-neutral-600 leading-relaxed">
-                    Currently accepting opportunities for engineering internships, research collaborations, and
-                    mentorship. Based in Bremen, Germany.
+                    First-year IEM student based in Bremen, Germany. I'm actively looking for engineering internships, research collaborations, and technical projects where I can help solve problems or build systems.
                   </p>
                   <div className="flex items-center gap-2 pt-2">
                     <Mail className="w-4 h-4 text-black" />
@@ -782,7 +786,7 @@ export default function App() {
                     onClick={() => setIsContactOpen(true)}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
-                    className="px-8 py-4 bg-black text-white font-sans font-bold text-sm tracking-widest uppercase rounded hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                    className="px-8 py-4 bg-black text-white font-sans font-bold text-sm tracking-widest uppercase rounded hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
                   >
                     Send Message
                   </button>
@@ -792,7 +796,7 @@ export default function App() {
                     rel="noreferrer"
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
-                    className="flex items-center justify-center gap-2 px-8 py-4 border border-[#d4d4d0] font-sans font-bold text-sm tracking-widest uppercase text-neutral-800 rounded hover:border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transition-all"
+                    className="flex items-center justify-center gap-2 px-8 py-4 border border-[#d4d4d0] font-sans font-bold text-sm tracking-widest uppercase text-neutral-800 rounded hover:border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transition-all cursor-pointer"
                   >
                     LinkedIn <ArrowUpRight className="w-4 h-4" />
                   </a>

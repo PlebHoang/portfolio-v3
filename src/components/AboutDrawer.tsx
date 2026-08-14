@@ -39,8 +39,8 @@ export const AboutDrawer: React.FC<AboutDrawerProps> = ({ isOpen, onClose }) => 
           <h3 className="font-sans font-bold text-xs uppercase tracking-widest text-neutral-500">
             Who I Am
           </h3>
-          <p className="font-serif text-xl leading-relaxed text-neutral-800 italic">
-            "I'm a first-year IEM student at Constructor University who enjoys building things. From assembling sumobots in my dorm to writing Docker pipelines for my daily routine, I love turning ideas into reality. Off-screen, you can find me playing various sports or experimenting with new recipes in the kitchen. I believe the best engineering happens when we solve real problems and help everyone around us grow."
+          <p className="font-serif text-lg md:text-xl leading-relaxed text-neutral-800 italic">
+            "I'm a first-year Industrial Engineering & Management student at Constructor University in Bremen. I'm happiest when I'm either diagnosing why a process is slow, assembling hardware at my desk, or writing scripts to automate things I hate doing by hand. When I'm away from a computer, you'll usually find me playing sports, cooking with whatever is in the dorm fridge, or learning something new."
           </p>
         </div>
 
@@ -52,9 +52,9 @@ export const AboutDrawer: React.FC<AboutDrawerProps> = ({ isOpen, onClose }) => 
           <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-thin">
             {[
               "IEM @ Constructor University",
-              "Hardware & Software Tinker",
+              "Hardware & Software Tinkerer",
               "Sports Enthusiast",
-              "Dorm Chef",
+              "Dorm Cook",
             ].map((fact) => (
               <div
                 key={fact}

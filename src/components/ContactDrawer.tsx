@@ -12,12 +12,12 @@ interface ContactDrawerProps {
   onClose: () => void;
 }
 
-type SubjectType = "collaboration" | "engineering" | "design" | "greeting";
+type SubjectType = "internship" | "collaboration" | "prototyping" | "greeting";
 
 export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState<SubjectType>("collaboration");
+  const [subject, setSubject] = useState<SubjectType>("internship");
   const [message, setMessage] = useState("");
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +43,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
   const resetForm = () => {
     setName("");
     setEmail("");
-    setSubject("collaboration");
+    setSubject("internship");
     setMessage("");
     setIsSuccess(false);
   };
@@ -104,9 +104,9 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                     className="space-y-6"
                   >
                     <div className="space-y-2">
-                      <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight text-neutral-900">Let's craft something meaningful.</h2>
+                      <h2 className="font-display font-black text-3xl md:text-4xl uppercase tracking-tight text-neutral-900">Let's build something real.</h2>
                       <p className="font-sans text-sm text-neutral-600 leading-relaxed">
-                        I am currently accepting select opportunities for product design and front-end engineering consultancy. Or drop by and say hello at <a href="mailto:hoangnguyenkhoi07@gmail.com" className="underline font-bold text-black hover:opacity-80">hoangnguyenkhoi07@gmail.com</a>.
+                        Have an internship opportunity, a project idea, or a technical problem to solve? Send a note below or reach out directly at <a href="mailto:hoangnguyenkhoi07@gmail.com" className="underline font-bold text-black hover:opacity-80">hoangnguyenkhoi07@gmail.com</a>.
                       </p>
                     </div>
 
@@ -116,20 +116,20 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                         Purpose of Outreach
                       </label>
                       <div className="grid grid-cols-2 gap-2">
-                        {(["collaboration", "engineering", "design", "greeting"] as SubjectType[]).map((type) => (
+                        {(["internship", "collaboration", "prototyping", "greeting"] as SubjectType[]).map((type) => (
                           <button
                             key={type}
                             type="button"
                             onClick={() => setSubject(type)}
-                            className={`p-3 border text-sm font-sans font-bold rounded-xl text-left capitalize transition-all cursor-pointer ${
+                            className={`p-3 border text-xs sm:text-sm font-sans font-bold rounded-xl text-left capitalize transition-all cursor-pointer ${
                               subject === type
                                 ? "bg-black border-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)]"
                                 : "bg-white/40 border-[#d4d4d0] text-neutral-800 hover:border-black"
                             }`}
                           >
-                            {type === "collaboration" && "💼 Collaboration"}
-                            {type === "engineering" && "💻 Tech Engineering"}
-                            {type === "design" && "🎨 Product Design"}
+                            {type === "internship" && "💼 Internship"}
+                            {type === "collaboration" && "🔬 Research & Collab"}
+                            {type === "prototyping" && "⚙️ Automation / Proto"}
                             {type === "greeting" && "☕ Just Say Hello"}
                           </button>
                         ))}
