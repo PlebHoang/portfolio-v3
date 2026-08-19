@@ -32,6 +32,10 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          VITE_SHEET_API_URL: https://script.google.com/macros/s/AKfycbz-fJITQQTy1SoSwf1NdNRXgVFNcnNU8OhO09xQtBbKZ3RSgYhvXcaGuQdjaQGwe4fI/exec
+          VITE_NEWSLETTER_API_URL: https://script.google.com/macros/s/AKfycbwsXQAu04Qwy_dwK4-iHfD1FXolooBvOYXaQ0rJbBfEKhBfgMh_4V2WG3ko1Kh-Vwdk/exec
+          VITE_CONTACT_API_URL: https://script.google.com/macros/s/AKfycbz-fJITQQTy1SoSwf1NdNRXgVFNcnNU8OhO09xQtBbKZ3RSgYhvXcaGuQdjaQGwe4fI/exec
         run: |
           npm run build
           cp dist/index.html dist/404.html
