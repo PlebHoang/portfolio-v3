@@ -323,7 +323,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
         {/* Layer 2: Subject cutout */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 20 }}>
           <motion.img
-            src="/assets/myface-transparent.png"
+            src="./assets/myface-transparent.png"
             alt="Khoi Hoang"
             style={{ y: heroFaceY, scale: heroFaceScale }}
             className="h-[44vh] sm:h-[50vh] md:h-[56vh] max-h-[480px] w-auto object-contain pointer-events-auto filter grayscale contrast-[1.1] brightness-[1.03] select-none"
