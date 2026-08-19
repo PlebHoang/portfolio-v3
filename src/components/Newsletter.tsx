@@ -4,10 +4,7 @@ import { ArrowLeft, CheckCircle2, Loader2, Send } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CustomCursor } from "./CustomCursor";
 
-const NEWSLETTER_API_URL =
-  import.meta.env.VITE_NEWSLETTER_API_URL ||
-  import.meta.env.VITE_SHEET_API_URL ||
-  "";
+const NEWSLETTER_API_URL = import.meta.env.VITE_NEWSLETTER_API_URL || "";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
