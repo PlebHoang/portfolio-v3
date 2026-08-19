@@ -71,9 +71,8 @@ export const AboutDrawer: React.FC<AboutDrawerProps> = ({ isOpen, onClose }) => 
         
         {/* Introduction Portrait Banner */}
         <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-[#d4d4d0] bg-neutral-200 group">
-          {/* TODO: When ready, replace fallback with custom uploaded photo from public/assets/ */}
           <img
-            src="/assets/myface-transparent.png"
+            src="/assets/about-photo.webp"
             alt="Khoi Hoang"
             className="w-full h-full object-cover filter grayscale contrast-[1.15] brightness-[1.02] group-hover:scale-105 transition-transform duration-700"
           />
