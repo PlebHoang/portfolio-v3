@@ -50,36 +50,28 @@ export const PhilosophyCarousel: React.FC = () => {
   const activeQuote = quotes[index];
 
   return (
-    <div className="w-full min-h-[300px] sm:min-h-[250px] md:min-h-[220px] flex flex-col justify-center relative py-6">
+    <div className="w-full border border-[#d4d4d0] bg-white/40 rounded-2xl p-6 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[190px] md:min-h-[180px] flex flex-col justify-center relative overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="w-full flex flex-col justify-center"
         >
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display font-black text-2xl sm:text-3xl md:text-[3.2vw] lg:text-[2.6vw] uppercase tracking-tight text-neutral-900 leading-[1.08] select-text"
-          >
+          <p className="font-display font-black text-xl sm:text-2xl md:text-[2.2vw] lg:text-[1.8vw] uppercase tracking-tight text-neutral-900 leading-[1.15] select-text">
             "{activeQuote?.text}"
-          </motion.p>
+          </p>
           
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.6, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-4 mt-6 md:mt-8"
-          >
-            <span className="bg-black text-[#F7F6F3] px-3 py-1 rounded-full text-[10px] md:text-xs font-mono font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-3 mt-4 md:mt-5">
+            <span className="bg-black text-[#F7F6F3] px-2.5 py-0.5 rounded-full text-[10px] md:text-xs font-mono font-bold uppercase tracking-wider">
               {activeQuote?.topic}
             </span>
-            <span className="font-serif italic text-base md:text-lg text-neutral-600">
-              , {activeQuote?.author}
+            <span className="font-serif italic text-sm md:text-base text-neutral-600">
+              — {activeQuote?.author}
             </span>
-          </motion.div>
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>

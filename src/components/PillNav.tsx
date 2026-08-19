@@ -66,7 +66,7 @@ export const PillNav: React.FC<PillNavProps> = ({ onOpenPalette }) => {
   return (
     <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 p-1.5 bg-[#111111]/90 backdrop-blur-md border border-white/10 rounded-full shadow-2xl transition-all duration-300">
       {sections.map((id, index) => {
-        const label = id === "hero" ? "Top" : id === "year-one" ? "Year 1" : id === "bucket" ? "Bucket" : id;
+        const label = id === "hero" ? "Top" : id === "bucket" ? "Bucket" : id;
         return (
           <button
             key={id}

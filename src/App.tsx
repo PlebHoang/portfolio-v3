@@ -38,28 +38,6 @@ interface Experience {
   link?: string;
 }
 
-interface Project {
-  id: string;
-  title: string;
-  period: string;
-  role: string;
-  summary: string;
-  technologies: string[];
-  highlight?: string;
-}
-
-interface YearOneItem {
-  num: string;
-  title: string;
-  domain: string;
-  story: string;
-  featured?: boolean;
-  highlight?: string;
-  mediaNote?: string;
-}
-
-// ─── Data (sourced from CV_Khoi_2026.pdf) ────────────────────────────────────
-
 const experiences: Experience[] = [
   {
     id: "sequoia-sky",
@@ -126,79 +104,112 @@ const experiences: Experience[] = [
   },
 ];
 
-const projects: Project[] = [
+const allProjects: CarouselProject[] = [
   {
     id: "morning-assistant",
     title: "AI-Integrated Morning Assistant",
-    period: "Jan 2026",
-    role: "System Architecture & Automation",
+    domain: "System Architecture & Automation",
     summary:
       "Containerized a Python pipeline on Docker integrating the Gemini API to automate weekly planning across Calendar, Notion, and unstructured data. Cut 60 minutes of manual scheduling down to 2–3 minutes.",
-    technologies: ["Python", "Docker", "Gemini API", "Bash", "Discord Webhooks"],
     highlight: "60 min → 3 min",
+    technologies: ["Python", "Docker", "Gemini API", "Bash", "Discord Webhooks"],
+    image: "/assets/morning-assistant.png",
+    mediaType: "diagram",
+    diagramImage: "/assets/morning-assistant.png",
+    diagramCaption: "Containerized Morning Assistant Automation Pipeline Architecture (Docker + Gemini API)",
   },
   {
     id: "hackathon-rover",
     title: "Gemini × Makers Odyssey Hackathon",
-    period: "Dec 2025",
-    role: "Product Design & Prototyping",
+    domain: "Product Design & Prototyping",
     summary:
       "3D-printed an adaptable-wheel rover chassis in Fusion 360 and engineered offline ESP-to-ESP wireless mesh telemetry for a NASA-inspired Martian exploration challenge. Delivered a fully functional prototype within 48 hours and won 3rd Place overall.",
+    highlight: "3rd Place",
     technologies: ["Fusion 360", "3D Printing", "Arduino", "ESP Mesh"],
-    highlight: "🏆 3rd Place",
+    image: "/assets/odysee/gemini x odysee.jpg",
+    mediaType: "gallery",
+    images: [
+      { src: "/assets/odysee/gemini x odysee.jpg", caption: "Final Mars Rover Prototype on Test Course" },
+      { src: "/assets/odysee/CDFCAFD5-4252-4971-B86A-70FB4F408F75.JPG", caption: "ESP Mesh Wireless Breadboard & Telemetry Wiring" },
+      { src: "/assets/odysee/IMG_8238.webp", caption: "Modular Wheel & Suspension Testing" },
+      { src: "/assets/odysee/IMG_8250.webp", caption: "Chassis Assembly & Motor Mounting" },
+      { src: "/assets/odysee/IMG_8321.webp", caption: "Field Testing on Rugged Surface" },
+      { src: "/assets/odysee/IMG_8322.webp", caption: "Sprint Prototyping & Iteration" },
+      { src: "/assets/odysee/IMG_8323.webp", caption: "Testing Sensor Array" },
+    ],
   },
-];
-
-const yearOneItems: YearOneItem[] = [
   {
-    num: "01",
+    id: "yearone-01",
     title: "The Fresh Connection",
-    domain: "Supply Chain",
-    story: "Simulated and stress-tested multi-tier supply chain networks under severe bullwhip effect scenarios, identifying critical inventory bottlenecks that destabilized fulfillment cycles.",
-    mediaNote: "📸 Add Supply Chain bottlenecks flow",
+    domain: "Supply Chain • Year 1",
+    summary:
+      "Simulated and stress-tested multi-tier supply chain networks under severe bullwhip effect scenarios, identifying critical inventory bottlenecks that destabilized fulfillment cycles.",
+    highlight: "Bullwhip Diagnosis",
+    technologies: ["Supply Chain Simulation", "Bullwhip Diagnostics", "Safety Stock Modeling", "Supplier SLAs", "ROI Optimization"],
+    image: "/assets/fresh-connection.webp",
+    mediaType: "simulation",
+    simulationImage: "/assets/fresh-connection.webp",
+    simulationStats: [
+      { label: "ROI Target", value: "+8.4%" },
+      { label: "Service Level", value: "96.8%" },
+      { label: "Bullwhip Lag", value: "-42%" },
+    ],
   },
   {
-    num: "02",
+    id: "yearone-02",
     title: "33-Sheet Excel Beast",
-    domain: "Operations",
-    story: "Engineered an end-to-end 33-sheet parametric factory model with 2 teammates: ABC inventory analysis, MTM motion study, transport intensity matrices, facility layout optimization, and full BOM planning.",
-    featured: true,
-    highlight: "📊 Parametric Model",
-    mediaNote: "📸 Add 33-sheet factory planning screenshots",
+    domain: "Operations • Year 1",
+    summary:
+      "Engineered an end-to-end 33-sheet parametric factory model with 2 teammates: ABC inventory analysis, MTM motion study, transport intensity matrices, facility layout optimization, and full BOM planning.",
+    highlight: "Parametric Model",
+    technologies: ["Advanced Excel (.XLSM)", "BOM Architecture", "MTM Motion Study", "ABC Inventory Analysis", "Transport Intensity Matrices"],
+    image: "/assets/excel-beast-thumb.png",
+    mediaType: "spreadsheet",
+    spreadsheet: {
+      downloadUrl: "/assets/33-sheets-beast.xlsm",
+      fileLabel: "Parametric Factory Operations Model (.XLSM)",
+      size: "734 KB",
+      sheetsCount: 33,
+      sheets: [
+        { code: "S01", name: "Production Morphology", desc: "Process taxonomy & machine classification" },
+        { code: "S14", name: "ABC Output", desc: "Cumulative value Pareto curves for components" },
+        { code: "S15", name: "BOM Hierarchy", desc: "Multi-level parametric product structure tree" },
+        { code: "S27", name: "Material Flow Matrix", desc: "From-to transit frequency across workstations" },
+        { code: "S30", name: "Transport Intensity Matrix", desc: "Distance-weighted volume transport optimization" },
+        { code: "S32", name: "MTM Motion Elements", desc: "Micro-motion synthesis calculating standard cycle times" },
+        { code: "S33", name: "Required Operators", desc: "Takt time and staffing balancing equations" },
+      ],
+    },
   },
   {
-    num: "03",
+    id: "yearone-03",
     title: "Sumobot (4th Place)",
-    domain: "Hardware",
-    story: "Wired and programmed an autonomous combat sumobot from scratch with no commercial kit or template. Placed 4th overall in the campus engineering tournament.",
-    mediaNote: "🎥 Add Sumobot battle video",
+    domain: "Hardware • Year 1",
+    summary:
+      "Wired and programmed an autonomous combat sumobot from scratch with no commercial kit or template. Placed 4th overall in the campus engineering tournament.",
+    highlight: "4th Place",
+    technologies: ["C++", "Arduino / Microcontrollers", "Ultrasonic Sensors", "IR Edge Detection", "Chassis Design", "Dual DC Drivetrain"],
+    image: "/assets/sumobot-thumb.jpg",
+    mediaType: "video",
+    videos: [
+      { title: "Match 1: Preliminary Bout", src: "/assets/Fight 1.mp4" },
+      { title: "Match 2: Elimination Round", src: "/assets/Fight 2.mp4" },
+    ],
   },
   {
-    num: "04",
+    id: "yearone-04",
     title: "3D Printed Room Parts",
-    domain: "Self-driven",
-    story: "Sourced and adapted existing CAD designs to 3D print and post-process custom functional room organizers and brackets by hand, solving personal storage bottlenecks.",
-    mediaNote: "📸 Add 3D prototype photo",
+    domain: "Self-driven • Year 1",
+    summary:
+      "Sourced and adapted existing CAD designs to 3D print and post-process custom functional room organizers and brackets by hand, solving personal storage bottlenecks.",
+    highlight: "Functional CAD",
+    technologies: ["3D Printing", "CAD Slicing", "PLA Post-Processing", "Tolerance Fitting"],
+    image: "/assets/odysee/IMG_8238.webp",
+    mediaType: "gallery",
+    images: [
+      { src: "/assets/odysee/IMG_8238.webp", caption: "Custom functional room organizers & brackets" },
+    ],
   },
-];
-
-const allProjects: CarouselProject[] = [
-  ...projects.map((p) => ({
-    id: p.id,
-    title: p.title,
-    domain: p.role,
-    summary: p.summary,
-    highlight: p.highlight,
-    technologies: p.technologies,
-  })),
-  ...yearOneItems.map((y) => ({
-    id: `yearone-${y.num}`,
-    title: y.title,
-    domain: `${y.domain} • Year 1`,
-    summary: y.story,
-    highlight: y.highlight,
-    technologies: [],
-  })),
 ];
 
 const capabilities = [
@@ -208,6 +219,7 @@ const capabilities = [
     skills: ["Supply Chain", "Factory Design", "Lean MTM/BOM", "Operations"],
     description:
       "Optimizing manufacturing processes, modeling facility layouts, and simulating dynamic production networks under real constraints.",
+    proof: "33-Sheet Factory Model · The Fresh Connection",
   },
   {
     id: "software-sys",
@@ -215,6 +227,7 @@ const capabilities = [
     skills: ["Python", "Docker", "Gemini API", "TypeScript/Bun"],
     description:
       "Building containerized automation pipelines, LLM-integrated workflows, and reliable full-stack developer tools.",
+    proof: "Morning Assistant · Docker Pipelines",
   },
   {
     id: "robotics",
@@ -222,6 +235,7 @@ const capabilities = [
     skills: ["Fusion 360", "3D Printing", "Arduino", "ESP Mesh"],
     description:
       "Designing mechanical enclosures, rapid 3D prototyping, and programming microcontrollers for offline telemetry.",
+    proof: "Gemini Mars Rover · Autonomous Sumobot",
   },
   {
     id: "sustainability",
@@ -229,6 +243,7 @@ const capabilities = [
     skills: ["Solar Circuit Design", "ESG Frameworks", "Green Finance", "Sensors"],
     description:
       "Mapping solar power extraction schematics, researching ESG compliance, and structuring green capital roadmaps.",
+    proof: "DK Engineering 1 MW · Sequoia Sky",
   },
 ];
 
@@ -242,7 +257,6 @@ export default function App() {
   const [showPalette, setShowPalette] = useState(false);
   const [showEnso, setShowEnso] = useState(false);
   const [konamiFound, setKonamiFound] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
   const [selectedItem, setSelectedItem] = useState<ItemDetails | null>(null);
 
   const { scrollY } = useScroll();
@@ -309,26 +323,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Active section scroll tracking
-  useEffect(() => {
-    const sections = ["hero", "works", "projects", "capabilities", "philosophy", "bucket", "connect"];
-    const handleScroll = () => {
-      let current = "hero";
-      for (const id of sections) {
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top < window.innerHeight * 0.4) {
-            current = id;
-          }
-        }
-      }
-      setActiveSection(current);
-    };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // 15-second Idle screensaver timer
   useEffect(() => {
@@ -382,16 +377,7 @@ export default function App() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          if (entry.target.id === "year-one") {
-            animate("#year-one .year-one-item", {
-              translateY: [40, 0],
-              scale: [0.97, 1],
-              opacity: [0, 1],
-              delay: stagger(40),
-              easing: "spring(1, 80, 10, 0)",
-            });
-            observer.unobserve(entry.target);
-          } else if (entry.target.id === "capabilities") {
+          if (entry.target.id === "capabilities") {
             animate("#capabilities .capability-item", {
               translateY: [40, 0],
               scale: [0.97, 1],
@@ -405,14 +391,10 @@ export default function App() {
       });
     }, observerOptions);
 
-    const yearOneEl = document.getElementById("year-one");
     const capabilitiesEl = document.getElementById("capabilities");
-
-    if (yearOneEl) observer.observe(yearOneEl);
     if (capabilitiesEl) observer.observe(capabilitiesEl);
 
     return () => {
-      if (yearOneEl) observer.unobserve(yearOneEl);
       if (capabilitiesEl) observer.unobserve(capabilitiesEl);
     };
   }, []);
@@ -421,15 +403,7 @@ export default function App() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const staggerContainer = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.04 } },
-  };
 
-  const wordFadeIn = {
-    hidden: { opacity: 0.12, y: 8 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
-  };
 
   const sectionReveal = {
     hidden: { opacity: 0, y: 40 },
@@ -560,7 +534,7 @@ export default function App() {
         {/* ── MAIN ── */}
         <main className="flex-1 w-full">
           {/* ── HERO: 3D Layered Composition ── */}
-          <HeroSection onAboutOpen={() => setIsAboutOpen(true)} />
+          <HeroSection onAboutOpen={() => setIsAboutOpen(true)} isReady={!isLoading} />
 
           {/* ── MARQUEE TICKER ── */}
           <MarqueeTicker />
@@ -708,7 +682,15 @@ export default function App() {
                         ))}
                       </div>
                     </div>
-                    <p className="font-sans text-base text-neutral-600 leading-relaxed mt-6">{cap.description}</p>
+                    <div>
+                      <p className="font-sans text-base text-neutral-600 leading-relaxed mt-6">{cap.description}</p>
+                      {cap.proof && (
+                        <div className="mt-4 pt-3 border-t border-[#d4d4d0]/60 flex items-center justify-between text-xs font-mono text-neutral-400">
+                          <span className="uppercase text-[10px] font-bold">Proof:</span>
+                          <span className="text-neutral-700 font-medium">{cap.proof}</span>
+                        </div>
+                      )}
+                    </div>
                   </motion.div>
                 ))}
               </div>

@@ -35,7 +35,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     { label: "View Projects", icon: "📁", action: () => scrollTo("projects"), shortcut: "P" },
     { label: "View Work Experience", icon: "💼", action: () => scrollTo("works"), shortcut: "W" },
     { label: "View Capabilities", icon: "⚡", action: () => scrollTo("capabilities"), shortcut: "C" },
-    { label: "View Year One", icon: "🎓", action: () => scrollTo("year-one"), shortcut: "Y" },
     { label: "Open About", icon: "👤", action: onOpenAbout, shortcut: "A" },
     { label: "Open Contact", icon: "✉️", action: onOpenContact, shortcut: "M" },
     { label: "Email Me", icon: "📧", action: () => { window.location.href = "mailto:hoangnguyenkhoi07@gmail.com"; }, shortcut: "E" },

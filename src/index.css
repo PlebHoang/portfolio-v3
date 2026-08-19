@@ -48,11 +48,6 @@ html {
 
 /* ─── Text/Cursor Utilities ────────────────────────────────────────────────── */
 
-.text-outline-thin {
-  -webkit-text-stroke: 1px #111111;
-  color: transparent;
-}
-
 .has-custom-cursor,
 .has-custom-cursor *,
 .has-custom-cursor *::before,
@@ -81,25 +76,4 @@ html {
 *:focus-visible {
   outline: 1.5px solid #111111;
   outline-offset: 2px;
-}
-
-/* ─── Marquee Animation ─────────────────────────────────────────────────── */
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 25s linear infinite;
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
 }

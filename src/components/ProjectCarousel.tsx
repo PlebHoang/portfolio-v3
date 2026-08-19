@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { ItemDetails } from "./ItemDrawer";
 
-export interface CarouselProject {
+export interface CarouselProject extends Partial<ItemDetails> {
   id: string;
   title: string;
   domain: string;
@@ -20,17 +20,18 @@ interface ProjectCarouselProps {
 export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSelectProject }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastWheelTime = useRef<number>(0);
 
-  // Auto-play timer (5s per slot), pauses when cursor hovers
+  // Auto-play timer (3s per slot), permanently stops once user interacts
   useEffect(() => {
-    if (isPaused || projects.length === 0) return;
+    if (isPaused || hasInteracted || projects.length === 0) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % projects.length);
     }, 3000);
     return () => clearInterval(timer);
-  }, [isPaused, projects.length]);
+  }, [isPaused, hasInteracted, projects.length]);
 
   // Non-passive wheel event listener to prevent main page scroll while spinning slots
   useEffect(() => {
@@ -40,6 +41,7 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
     const handleWheel = (e: WheelEvent) => {
       // Intercept wheel event and stop vertical page scroll
       e.preventDefault();
+      setHasInteracted(true);
 
       const now = Date.now();
       if (now - lastWheelTime.current < 250) return;
@@ -60,12 +62,15 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
   }, [projects.length]);
 
   const handleSelect = (idx: number) => {
+    setHasInteracted(true);
+    setIsPaused(true);
     if (idx === activeIndex) {
       const p = projects[idx];
       onSelectProject({
+        ...p,
         title: p.title,
         subtitle: `${p.domain} ${p.highlight ? `• ${p.highlight}` : ""}`,
-        description: p.summary,
+        description: p.description || p.summary,
         technologies: p.technologies,
       });
     } else {
@@ -111,16 +116,20 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
                 damping: 24,
                 mass: 0.8,
               }}
-              className={`absolute cursor-pointer rounded-2xl overflow-hidden border ${
+              className={`group absolute cursor-pointer rounded-2xl overflow-hidden border ${
                 isActive
                   ? "border-black shadow-2xl ring-2 ring-black/10"
-                  : "border-[#d4d4d0] hover:border-black hover:opacity-60"
+                  : "border-[#d4d4d0] hover:border-black hover:opacity-80"
               } bg-neutral-900 aspect-[16/10] w-[280px] sm:w-[440px] md:w-[620px] transition-colors duration-300`}
             >
               {/* Background Image / Placeholder */}
-              <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
+              <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center overflow-hidden">
                 {proj.image ? (
-                  <img src={proj.image} alt={proj.title} className="w-full h-full object-cover opacity-60" />
+                  <img
+                    src={proj.image}
+                    alt={proj.title}
+                    className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                  />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-neutral-800 via-neutral-900 to-black opacity-90" />
                 )}
@@ -157,7 +166,11 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
         {projects.map((_, i) => (
           <button
             key={i}
-            onClick={() => setActiveIndex(i)}
+            onClick={() => {
+              setActiveIndex(i);
+              setHasInteracted(true);
+              setIsPaused(true);
+            }}
             className={`h-2 rounded-full transition-all cursor-pointer ${
               i === activeIndex ? "w-8 bg-black" : "w-2 bg-[#d4d4d0] hover:bg-neutral-500"
             }`}
