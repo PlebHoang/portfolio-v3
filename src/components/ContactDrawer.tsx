@@ -14,6 +14,11 @@ interface ContactDrawerProps {
 
 type SubjectType = "internship" | "collaboration" | "prototyping" | "greeting";
 
+const CONTACT_API_URL =
+  import.meta.env.VITE_CONTACT_API_URL ||
+  import.meta.env.VITE_SHEET_API_URL ||
+  "";
+
 export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,21 +28,46 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !message) return;
+    if (!name.trim() || !email.trim() || !message.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
-    // ponytail: mailto fallback, add Formspree/serverless handler when needed
+
+    const payload = {
+      action: "contact",
+      name: name.trim(),
+      email: email.trim(),
+      subject,
+      message: message.trim(),
+      timestamp: new Date().toISOString(),
+    };
+
+    if (CONTACT_API_URL) {
+      try {
+        await fetch(CONTACT_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+          mode: "no-cors",
+        });
+        setIsSubmitting(false);
+        setIsSuccess(true);
+        return;
+      } catch (err) {
+        console.warn("Direct contact submission failed, falling back to mailto:", err);
+      }
+    }
+
+    // Fallback: mailto client link
     const mailtoBody = encodeURIComponent(`Name: ${name}\nEmail Coordinates: ${email}\n\nMessage:\n${message}`);
     const mailtoLink = `mailto:hoangnguyenkhoi07@gmail.com?subject=${encodeURIComponent(`[Portfolio Outreach - ${subject}] ${name}`)}&body=${mailtoBody}`;
     
-    // Tiny delay to make the loader state feel responsive before opening client
     setTimeout(() => {
       window.open(mailtoLink, "_blank");
       setIsSubmitting(false);
       setIsSuccess(true);
-    }, 800);
+    }, 600);
   };
 
   const resetForm = () => {

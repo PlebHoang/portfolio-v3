@@ -82,6 +82,7 @@ export const BucketList: React.FC = () => {
     if (!inputTitle.trim() || submitStatus === "sending") return;
 
     const submission = {
+      action: "bucket_list",
       id: Date.now().toString(),
       title: inputTitle.trim(),
       category: inputCategory,
