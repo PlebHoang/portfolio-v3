@@ -23,6 +23,7 @@ import { EnsoScreensaver } from "./components/EnsoScreensaver";
 import { ItemDrawer, ItemDetails } from "./components/ItemDrawer";
 import { ProjectCarousel, CarouselProject } from "./components/ProjectCarousel";
 import { CommandPalette } from "./components/CommandPalette";
+import { SpotEasterEgg, spotAudio } from "./components/SpotEasterEgg";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -256,7 +257,8 @@ export default function App() {
   const [showGrid, setShowGrid] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
   const [showEnso, setShowEnso] = useState(false);
-  const [konamiFound, setKonamiFound] = useState(false);
+  const [showSpot, setShowSpot] = useState(false);
+  const [spotStep, setSpotStep] = useState(0);
   const [selectedItem, setSelectedItem] = useState<ItemDetails | null>(null);
 
   const { scrollY } = useScroll();
@@ -289,7 +291,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleShortcut);
   }, []);
 
-  // Konami Code detector for secret inline toast
+  // Spider-Verse 'The Spot' 8-key Konami Sequence (↑ ↑ ↓ ↓ ← → ← →)
   useEffect(() => {
     const konamiSeq = [
       "arrowup",
@@ -300,28 +302,44 @@ export default function App() {
       "arrowright",
       "arrowleft",
       "arrowright",
-      "b",
-      "a",
     ];
-    let index = 0;
+    let resetTimer: NodeJS.Timeout;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in form inputs or modals
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
       const key = e.key.toLowerCase();
-      if (key === konamiSeq[index]) {
-        index++;
-        if (index === konamiSeq.length) {
-          index = 0;
-          setKonamiFound(true);
-          setTimeout(() => setKonamiFound(false), 4000);
+      if (key === konamiSeq[spotStep]) {
+        spotAudio.playStepTone(spotStep);
+        const nextStep = spotStep + 1;
+        setSpotStep(nextStep);
+
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          setSpotStep(0);
+        }, 3500);
+
+        if (nextStep === konamiSeq.length) {
+          setSpotStep(0);
+          setShowSpot(true);
         }
-      } else {
-        index = 0;
+      } else if (key.startsWith("arrow")) {
+        setSpotStep(0);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    return () => {
+      clearTimeout(resetTimer);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [spotStep]);
 
 
 
@@ -335,7 +353,7 @@ export default function App() {
 
       idleTimer = setTimeout(() => {
         setShowEnso(true);
-      }, 60000);
+      }, 90000);
     };
 
     const events = ["mousemove", "keydown", "scroll", "touchstart", "click"];
@@ -425,19 +443,12 @@ export default function App() {
         {showEnso && <EnsoScreensaver onDismiss={() => setShowEnso(false)} />}
       </AnimatePresence>
 
-      {/* Konami Easter Egg Toast */}
-      <AnimatePresence>
-        {konamiFound && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 bg-black text-white font-mono text-xs rounded-full shadow-2xl flex items-center gap-2 border border-neutral-800"
-          >
-            <span className="animate-bounce">🎮</span> ↑↑↓↓←→←→BA · You found it. Let's build something.
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Spider-Verse 'The Spot' Easter Egg & Live Keyboard Hint */}
+      <SpotEasterEgg
+        isOpen={showSpot}
+        onClose={() => setShowSpot(false)}
+        stepProgress={spotStep}
+      />
 
       {/* Item Details Drawer */}
       <ItemDrawer item={selectedItem} onClose={() => setSelectedItem(null)} />
@@ -448,6 +459,7 @@ export default function App() {
         onClose={() => setShowPalette(false)}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenContact={() => setIsContactOpen(true)}
+        onOpenSpot={() => setShowSpot(true)}
       />
 
       {/* Pill Navigation */}
@@ -799,7 +811,7 @@ export default function App() {
             </div>
 
             <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] text-neutral-400">
-              <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">⌘K</kbd> command palette · <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">↑↑↓↓←→←→BA</kbd> secret code
+              <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">⌘K</kbd> command palette · <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">↑↑↓↓←→</kbd> spot dimension
             </div>
 
             <div className="flex items-center gap-6 sm:gap-8 text-xs font-sans font-bold uppercase tracking-wider">

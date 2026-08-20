@@ -12,6 +12,7 @@ interface CommandPaletteProps {
   onClose: () => void;
   onOpenAbout: () => void;
   onOpenContact: () => void;
+  onOpenSpot?: () => void;
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
@@ -19,6 +20,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onClose,
   onOpenAbout,
   onOpenContact,
+  onOpenSpot,
 }) => {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -37,6 +39,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     { label: "View Capabilities", icon: "⚡", action: () => scrollTo("capabilities"), shortcut: "C" },
     { label: "Open About", icon: "👤", action: onOpenAbout, shortcut: "A" },
     { label: "Open Contact", icon: "✉️", action: onOpenContact, shortcut: "M" },
+    { label: "The Spot Dimension (Secret)", icon: "🌀", action: () => { onClose(); onOpenSpot?.(); }, shortcut: "S" },
     { label: "Read Newsletter / Thoughts", icon: "📰", action: () => { window.location.hash = "/newsletter"; }, shortcut: "N" },
     { label: "Email Me", icon: "📧", action: () => { window.location.href = "mailto:hoangnguyenkhoi07@gmail.com"; }, shortcut: "E" },
     { label: "LinkedIn", icon: "🔗", action: () => window.open("https://www.linkedin.com/in/hoangnguyenkhoi/", "_blank"), shortcut: "L" },
