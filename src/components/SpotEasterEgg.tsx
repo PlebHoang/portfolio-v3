@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Sparkles, Terminal, Zap, FileText } from "lucide-react";
+import { X, Sparkles, Terminal, Zap, FileText, Split } from "lucide-react";
 
 // Web Audio API Sound Engine (Spider-Verse Deep Sub-bass & Smooth Inky Pops)
 class SpotAudioEngine {
@@ -57,19 +57,19 @@ class SpotAudioEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
-      const baseFreq = Math.max(50, 200 - sizeFactor * 1.5);
+      const baseFreq = Math.max(45, 190 - sizeFactor * 1.4);
       osc.type = "sine";
       osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.5, now + 0.25);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.45, now + 0.35);
 
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
 
       osc.start(now);
-      osc.stop(now + 0.3);
+      osc.stop(now + 0.4);
     } catch (e) {
       // Autoplay fallback
     }
@@ -180,7 +180,7 @@ class SpotAudioEngine {
 
 const spotAudio = new SpotAudioEngine();
 
-// Living Ink Portal Class with Organic Wobble & Elasticity
+// Living Ink Portal Class with Organic Wobble & Gravitational Tidal Stretching
 class InkPortal {
   x: number;
   y: number;
@@ -191,17 +191,18 @@ class InkPortal {
   vx: number;
   vy: number;
   isDragged: boolean = false;
-  points: number = 14;
   scale: number = 1;
+  mergeCooldown: number = 0;
 
-  constructor(x: number, y: number, radius: number, startScale: number = 1) {
+  constructor(x: number, y: number, radius: number, startScale: number = 1, cooldown: number = 0) {
     this.x = x;
     this.y = y;
     this.targetRadius = radius;
     this.radius = radius;
     this.scale = startScale;
+    this.mergeCooldown = cooldown;
     this.wobblePhase = Math.random() * Math.PI * 2;
-    this.wobbleSpeed = 0.03 + Math.random() * 0.02;
+    this.wobbleSpeed = 0.04 + Math.random() * 0.03;
     this.vx = (Math.random() - 0.5) * 0.8;
     this.vy = (Math.random() - 0.5) * 0.8;
   }
@@ -210,15 +211,20 @@ class InkPortal {
     width: number,
     height: number,
     mouse: { x: number; y: number; active: boolean; isDown: boolean },
-    isFrozen: boolean
+    isFrozen: boolean,
+    isInspiral: boolean = false
   ) {
+    if (this.mergeCooldown > 0) {
+      this.mergeCooldown--;
+    }
+
     if (this.scale < 1) {
       this.scale += (1 - this.scale) * 0.28;
     }
 
     if (isFrozen) return;
 
-    this.wobblePhase += this.wobbleSpeed;
+    this.wobblePhase += this.wobbleSpeed * (isInspiral ? 4.0 : 1.0);
 
     if (this.isDragged) {
       this.x += (mouse.x - this.x) * 0.35;
@@ -229,57 +235,79 @@ class InkPortal {
       return;
     }
 
-    this.x += this.vx;
-    this.y += this.vy;
+    if (!isInspiral) {
+      this.x += this.vx;
+      this.y += this.vy;
 
-    // Bounds bounce
-    if (this.x < this.radius) {
-      this.x = this.radius;
-      this.vx *= -1;
-    } else if (this.x > width - this.radius) {
-      this.x = width - this.radius;
-      this.vx *= -1;
-    }
+      this.vx *= 0.985;
+      this.vy *= 0.985;
 
-    if (this.y < this.radius) {
-      this.y = this.radius;
-      this.vy *= -1;
-    } else if (this.y > height - this.radius) {
-      this.y = height - this.radius;
-      this.vy *= -1;
-    }
+      // Bounds bounce
+      if (this.x < this.radius) {
+        this.x = this.radius;
+        this.vx = Math.abs(this.vx) * 0.8;
+      } else if (this.x > width - this.radius) {
+        this.x = width - this.radius;
+        this.vx = -Math.abs(this.vx) * 0.8;
+      }
 
-    // Cursor attraction when hovering
-    if (mouse.active && !mouse.isDown) {
-      const dx = mouse.x - this.x;
-      const dy = mouse.y - this.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 220 && dist > 1) {
-        this.x += (dx / dist) * 0.6;
-        this.y += (dy / dist) * 0.6;
-        this.radius = this.targetRadius * (1 + (1 - dist / 220) * 0.25);
+      if (this.y < this.radius) {
+        this.y = this.radius;
+        this.vy = Math.abs(this.vy) * 0.8;
+      } else if (this.y > height - this.radius) {
+        this.y = height - this.radius;
+        this.vy = -Math.abs(this.vy) * 0.8;
+      }
+
+      // Cursor attraction when hovering
+      if (mouse.active && !mouse.isDown) {
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 220 && dist > 1) {
+          this.x += (dx / dist) * 0.5;
+          this.y += (dy / dist) * 0.5;
+          this.radius = this.targetRadius * (1 + (1 - dist / 220) * 0.25);
+        } else {
+          this.radius += (this.targetRadius - this.radius) * 0.1;
+        }
       } else {
         this.radius += (this.targetRadius - this.radius) * 0.1;
       }
-    } else {
-      this.radius += (this.targetRadius - this.radius) * 0.1;
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, companionAngle?: number) {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.scale(this.scale, this.scale);
 
     ctx.beginPath();
-    for (let i = 0; i <= this.points; i++) {
-      const angle = (i / this.points) * Math.PI * 2;
-      const offset =
-        Math.sin(angle * 3 + this.wobblePhase) * (this.radius * 0.08) +
-        Math.cos(angle * 2 - this.wobblePhase) * (this.radius * 0.06);
-      const r = Math.max(8, this.radius + offset);
+    const pts = 16;
+
+    // Wobbleness scales dynamically with spot size: 3% for small spots up to 10% maximum for giant spots
+    const sizeRatio = Math.min(1.0, Math.max(0, (this.radius - 22) / 180));
+    const wobbleIntensity = 0.03 + sizeRatio * 0.07; // 3% to 10% maximum
+
+    for (let i = 0; i <= pts; i++) {
+      const angle = (i / pts) * Math.PI * 2;
+
+      // Dynamic organic ink ripple scaled by spot size (capped at 10%)
+      const wobble =
+        Math.sin(angle * 3 + this.wobblePhase) * (this.radius * wobbleIntensity * 0.75) +
+        Math.cos(angle * 2 - this.wobblePhase * 1.2) * (this.radius * wobbleIntensity * 0.25);
+
+      // Subtle gentle tidal elongation toward companion (max 6-8%, smooth & grounded)
+      let tidal = 0;
+      if (companionAngle !== undefined) {
+        tidal = Math.cos(angle - companionAngle) * (this.radius * 0.07);
+      }
+
+      // Safe lower-bound clamping guarantees no inversion or glitchy vertices
+      const r = Math.max(this.radius * 0.6, Math.max(6, this.radius + wobble + tidal));
       const px = Math.cos(angle) * r;
       const py = Math.sin(angle) * r;
+
       if (i === 0) ctx.moveTo(px, py);
       else ctx.lineTo(px, py);
     }
@@ -288,8 +316,8 @@ class InkPortal {
     ctx.fill();
 
     // Inner comic sketch dash ring
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
-    ctx.lineWidth = Math.min(3, Math.max(1.2, this.radius * 0.03));
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
+    ctx.lineWidth = Math.min(3.5, Math.max(1.2, this.radius * 0.035));
     ctx.setLineDash([4, 6]);
     ctx.stroke();
     ctx.setLineDash([]);
@@ -298,7 +326,7 @@ class InkPortal {
     if (this.radius > 75) {
       ctx.beginPath();
       ctx.arc(0, 0, this.radius * 0.35, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
       ctx.fill();
     }
 
@@ -328,8 +356,28 @@ class InkParticle {
     this.color = Math.random() > 0.15 ? "#000000" : "#555555";
   }
 
-  update(width: number, height: number, portals: InkPortal[], isFrozen: boolean) {
+  update(
+    width: number,
+    height: number,
+    portals: InkPortal[],
+    isFrozen: boolean,
+    barycenter?: { x: number; y: number; active: boolean; chaos: number }
+  ) {
     if (isFrozen) return;
+
+    // Sucked into accretion vortex around barycenter during inspiral
+    if (barycenter && barycenter.active) {
+      const bdx = barycenter.x - this.x;
+      const bdy = barycenter.y - this.y;
+      const bdist = Math.hypot(bdx, bdy);
+      if (bdist < 360 && bdist > 5) {
+        const tx = -bdy / bdist;
+        const ty = bdx / bdist;
+        const speed = Math.min(22, (90 + barycenter.chaos * 150) / Math.sqrt(bdist + 10));
+        this.vx = this.vx * 0.8 + (tx * speed + (bdx / bdist) * 1.8) * 0.2;
+        this.vy = this.vy * 0.8 + (ty * speed + (bdy / bdist) * 1.8) * 0.2;
+      }
+    }
 
     this.x += this.vx;
     this.y += this.vy;
@@ -354,8 +402,8 @@ class InkParticle {
         this.vx = (Math.random() - 0.5) * 6;
         this.vy = (Math.random() - 0.5) * 6;
       } else if (dist < p.radius * 2.8) {
-        this.vx += (dx / dist) * 0.22;
-        this.vy += (dy / dist) * 0.22;
+        this.vx += (dx / dist) * 0.25;
+        this.vy += (dy / dist) * 0.25;
       }
     });
   }
@@ -374,6 +422,20 @@ interface SpotEasterEggProps {
   stepProgress: number; // 0 to 8
 }
 
+const MAX_SPLITS = 2;
+const SPOT_SEQUENCE = ["↑", "↑", "↓", "↓", "←", "→", "←", "→"] as const;
+
+interface InspiralSession {
+  startTime: number;
+  baryX: number;
+  baryY: number;
+  nodes: {
+    portal: InkPortal;
+    initialR: number;
+    initialAngle: number;
+  }[];
+}
+
 export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, stepProgress }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const portalsRef = useRef<InkPortal[]>([]);
@@ -386,7 +448,12 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
     isDown: false,
   });
   const draggedPortalRef = useRef<InkPortal | null>(null);
+  const lastClickRef = useRef<{ time: number; x: number; y: number }>({ time: 0, x: 0, y: 0 });
+  const sessionRef = useRef<InspiralSession | null>(null);
+  const gravityDisabledUntilRef = useRef<number>(0);
+
   const [portalCount, setPortalCount] = useState<number>(5);
+  const [splitCount, setSplitCount] = useState<number>(0);
   const [isDossierOpen, setIsDossierOpen] = useState<boolean>(true);
 
   // Timeline Phases: 'idle' | 'charging' (0.5s) | 'freeze_multiplying' (2.4s) | 'glitching' (1.0s)
@@ -403,6 +470,9 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
     if (isOpen) {
       setCollapsePhase("idle");
       collapsePhaseRef.current = "idle";
+      setSplitCount(0);
+      sessionRef.current = null;
+      gravityDisabledUntilRef.current = 0;
       setIsDossierOpen(true);
       spotAudio.playQuantumDrop();
     }
@@ -428,7 +498,44 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
     return () => clearInterval(interval);
   }, [collapsePhase]);
 
-  // Canvas Mounting & Animation Loop (Mounts ONLY on isOpen change so portalsRef is never wiped!)
+  // ── Spot Splitting Capped to Max 3 Splits (Random 4 to 7 children per split) ──
+  const splitSpots = (targetPortal?: InkPortal) => {
+    if (collapsePhaseRef.current !== "idle" || splitCount >= MAX_SPLITS) return;
+
+    spotAudio.playStepTone(3);
+    sessionRef.current = null;
+    gravityDisabledUntilRef.current = performance.now() + 2200; // Deactivate gravity for 2.2s so spots disperse far apart
+
+    const portals = portalsRef.current;
+    if (portals.length === 0) return;
+
+    const splitSinglePortal = (p: InkPortal): InkPortal[] => {
+      const count = Math.floor(Math.random() * 4) + 4; // 4, 5, 6, or 7
+      const childRadius = Math.max(22, (p.radius / Math.sqrt(count)) * 0.95);
+      const spawnDist = p.radius * 0.8 + childRadius * 1.8;
+
+      return Array.from({ length: count }, (_, i) => {
+        const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.35;
+        const px = p.x + Math.cos(angle) * spawnDist;
+        const py = p.y + Math.sin(angle) * spawnDist;
+        const child = new InkPortal(px, py, childRadius, 0.4, 90); // 90-frame collision grace period
+        const pushSpeed = 7.5 + Math.random() * 3.5; // Strong outward push
+        child.vx = Math.cos(angle) * pushSpeed;
+        child.vy = Math.sin(angle) * pushSpeed;
+        return child;
+      });
+    };
+
+    const newPortals = portals.flatMap((p) =>
+      !targetPortal || p === targetPortal ? splitSinglePortal(p) : [p]
+    );
+
+    portalsRef.current = newPortals;
+    setPortalCount(newPortals.length);
+    setSplitCount((prev) => prev + 1);
+  };
+
+  // Canvas Mounting & Animation Loop
   useEffect(() => {
     if (!isOpen) return;
 
@@ -478,13 +585,26 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
       mouseRef.current.active = true;
       mouseRef.current.isDown = true;
 
+      const now = Date.now();
+      const isDoubleTap =
+        now - lastClickRef.current.time < 320 &&
+        Math.hypot(pos.x - lastClickRef.current.x, pos.y - lastClickRef.current.y) < 30;
+
+      lastClickRef.current = { time: now, x: pos.x, y: pos.y };
+
       for (let i = portalsRef.current.length - 1; i >= 0; i--) {
         const p = portalsRef.current[i];
         const dx = pos.x - p.x;
         const dy = pos.y - p.y;
         if (Math.sqrt(dx * dx + dy * dy) <= p.radius * 1.2) {
+          if (isDoubleTap) {
+            splitSpots(p);
+            return;
+          }
+
           p.isDragged = true;
           draggedPortalRef.current = p;
+          sessionRef.current = null; // reset inspiral session if user drags
           spotAudio.playStepTone(4);
           break;
         }
@@ -532,21 +652,131 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
         ctx.fillRect(0, 0, width, height);
       }
 
-      const portals = portalsRef.current;
+      const numSpots = portalsRef.current.length;
+      const isGravityActive = performance.now() >= gravityDisabledUntilRef.current;
+      const isCandidateInspiral = isGravityActive && (numSpots === 2 || numSpots === 3);
 
-      // Normal idle merging physics
-      if (currentPhase === "idle") {
-        for (let i = 0; i < portals.length; i++) {
-          for (let j = i + 1; j < portals.length; j++) {
-            const p1 = portals[i];
-            const p2 = portals[j];
+      let baryX = 0;
+      let baryY = 0;
+      let inspiralActive = false;
+      let chaosLevel = 0; // 0 to 1
+
+      // ── Numerical Relativity 3-Second Inspiral Merger Simulation ──
+      if (currentPhase === "idle" && isCandidateInspiral && !draggedPortalRef.current) {
+        let totalMass = 0;
+        let bx = 0;
+        let by = 0;
+        for (const p of portalsRef.current) {
+          const m = p.radius ** 2;
+          totalMass += m;
+          bx += p.x * m;
+          by += p.y * m;
+        }
+        bx /= totalMass;
+        by /= totalMass;
+
+        // Verify spots are within mutual gravitational reach
+        const allWithinReach = portalsRef.current.every((p) => Math.hypot(p.x - bx, p.y - by) < 450);
+
+        if (allWithinReach) {
+          if (!sessionRef.current) {
+            sessionRef.current = {
+              startTime: performance.now(),
+              baryX: bx,
+              baryY: by,
+              nodes: portalsRef.current.map((p) => ({
+                portal: p,
+                initialR: Math.max(35, Math.hypot(p.x - bx, p.y - by)),
+                initialAngle: Math.atan2(p.y - by, p.x - bx),
+              })),
+            };
+          }
+
+          const session = sessionRef.current;
+          baryX = session.baryX;
+          baryY = session.baryY;
+          inspiralActive = true;
+
+          const now = performance.now();
+          const elapsedSec = (now - session.startTime) / 1000;
+
+          // Check if distance has collapsed or time has reached merger threshold (2.8s)
+          const tau = Math.min(1.0, elapsedSec / 2.8);
+          const distanceFactor = Math.max(0, 1 - Math.pow(tau, 1.25));
+
+          if (tau >= 1.0 || distanceFactor <= 0.05) {
+            // ── FUSE ALL INSPIRAL NODES SIMULTANEOUSLY INTO 1 GIANT PORTAL ──
+            const totalR2 = session.nodes.reduce((acc, n) => acc + n.portal.targetRadius ** 2, 0);
+            const combinedRadius = Math.min(270, Math.sqrt(totalR2));
+
+            const singleMergedPortal = new InkPortal(session.baryX, session.baryY, combinedRadius);
+            portalsRef.current = [singleMergedPortal];
+            setPortalCount(1);
+            setSplitCount(0);
+            sessionRef.current = null;
+            inspiralActive = false;
+
+            spotAudio.playMergeTone(combinedRadius);
+            shockwavesRef.current.push({
+              x: session.baryX,
+              y: session.baryY,
+              radius: 15,
+              maxRadius: combinedRadius * 3.5,
+            });
+          } else {
+            chaosLevel = Math.max(0, (tau - 0.2) / 0.8);
+            const angleChirp = 3.6 * elapsedSec + 28.0 * Math.pow(tau, 2.3);
+
+            for (const node of session.nodes) {
+              const p = node.portal;
+              const currentR = node.initialR * distanceFactor;
+              const currentAngle = node.initialAngle + angleChirp;
+
+              p.x = session.baryX + Math.cos(currentAngle) * currentR;
+              p.y = session.baryY + Math.sin(currentAngle) * currentR;
+              p.vx = 0;
+              p.vy = 0;
+            }
+
+            // Gravitational wave ripples
+            if (chaosLevel > 0.1) {
+              for (let w = 0; w < 3; w++) {
+                const wavePhase = (elapsedSec * 4.0 + w * (Math.PI / 1.5)) % Math.PI;
+                const waveRadius = wavePhase * 130 + 20;
+                const waveAlpha = Math.max(0, (1 - wavePhase / Math.PI) * chaosLevel * 0.25);
+
+                ctx.beginPath();
+                ctx.arc(session.baryX, session.baryY, waveRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(0, 0, 0, ${waveAlpha})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+              }
+            }
+          }
+        } else {
+          sessionRef.current = null;
+        }
+      } else if (!isCandidateInspiral) {
+        sessionRef.current = null;
+      }
+
+      // Autonomous Pairwise Merging for Free-Floating & Dragged Spots (when NOT in collective inspiral)
+      if (currentPhase === "idle" && !inspiralActive && portalsRef.current.length > 1) {
+        const activePortals = portalsRef.current;
+        for (let i = 0; i < activePortals.length; i++) {
+          for (let j = i + 1; j < activePortals.length; j++) {
+            const p1 = activePortals[i];
+            const p2 = activePortals[j];
             const dx = p2.x - p1.x;
             const dy = p2.y - p1.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const mergeDist = (p1.radius + p2.radius) * 0.78;
+            const dist = Math.hypot(dx, dy);
 
-            if (dist < mergeDist && dist > 0) {
-              const combinedRadius = Math.min(260, Math.sqrt(p1.targetRadius ** 2 + p2.targetRadius ** 2));
+            const isManualDrag = p1.isDragged || p2.isDragged;
+            const mergeDist = (p1.radius + p2.radius) * (isManualDrag ? 0.95 : 0.75);
+            const canMerge = p1.mergeCooldown === 0 && p2.mergeCooldown === 0;
+
+            if (canMerge && dist < mergeDist && dist > 0) {
+              const combinedRadius = Math.min(270, Math.sqrt(p1.targetRadius ** 2 + p2.targetRadius ** 2));
               const totalMass = p1.radius ** 2 + p2.radius ** 2;
 
               p1.x = (p1.x * (p1.radius ** 2) + p2.x * (p2.radius ** 2)) / totalMass;
@@ -560,33 +790,47 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
                 x: p1.x,
                 y: p1.y,
                 radius: 10,
-                maxRadius: combinedRadius * 2.8,
+                maxRadius: combinedRadius * 3.0,
               });
 
-              portals.splice(j, 1);
-              setPortalCount(portals.length);
+              activePortals.splice(j, 1);
+              setPortalCount(activePortals.length);
+              sessionRef.current = null;
+              if (activePortals.length === 1) {
+                setSplitCount(0);
+              }
               j--;
-            } else if (dist < (p1.radius + p2.radius) * 1.4) {
-              const pull = 0.45;
-              p1.x += (dx / dist) * pull;
-              p1.y += (dy / dist) * pull;
-              p2.x -= (dx / dist) * pull;
-              p2.y -= (dy / dist) * pull;
+            } else if (isGravityActive && dist < (p1.radius + p2.radius) * 3.2 && dist > 1) {
+              // Mass-weighted inverse-distance gravitational attraction (active only after split grace period)
+              const pull = Math.min(2.0, ((p1.radius + p2.radius) * 12) / Math.max(30, dist));
+              const nx = dx / dist;
+              const ny = dy / dist;
+              p1.vx += nx * pull * 0.1;
+              p1.vy += ny * pull * 0.1;
+              p2.vx -= nx * pull * 0.1;
+              p2.vy -= ny * pull * 0.1;
             }
           }
         }
       }
 
-      // Draw portals
+      // Draw portals cleanly with subtle living ink wobble
+      const livePortals = portalsRef.current;
       if (currentPhase !== "glitching") {
-        portals.forEach((p) => {
-          p.update(width, height, mouseRef.current, isFrozen);
-          p.draw(ctx);
+        livePortals.forEach((p) => {
+          p.update(width, height, mouseRef.current, isFrozen, inspiralActive);
+
+          let compAngle: number | undefined = undefined;
+          if (inspiralActive && livePortals.length === 2) {
+            compAngle = Math.atan2(baryY - p.y, baryX - p.x);
+          }
+
+          p.draw(ctx, compAngle);
         });
 
-        // Draw background particles
+        // Draw background particles (swirled by barycenter accretion disk)
         particlesRef.current.forEach((pt) => {
-          pt.update(width, height, portals, isFrozen);
+          pt.update(width, height, livePortals, isFrozen, { x: baryX, y: baryY, active: inspiralActive, chaos: chaosLevel });
           pt.draw(ctx);
         });
       }
@@ -594,13 +838,13 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
       // Render shockwaves
       for (let i = shockwavesRef.current.length - 1; i >= 0; i--) {
         const sw = shockwavesRef.current[i];
-        sw.radius += 18;
+        sw.radius += 20;
         const alpha = Math.max(0, 1 - sw.radius / sw.maxRadius);
 
         ctx.beginPath();
         ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 0, 0, ${alpha * 0.85})`;
-        ctx.lineWidth = 4;
+        ctx.strokeStyle = `rgba(0, 0, 0, ${alpha * 0.9})`;
+        ctx.lineWidth = 4.5;
         ctx.stroke();
 
         if (sw.radius >= sw.maxRadius) {
@@ -625,7 +869,7 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
     };
   }, [isOpen]);
 
-  // ── Cinematic Multiverse Collapse: Charge (Anchored) → Freeze (38 Giant Spots Flood Screen Black) → Unstable Screen Glitch (1s) → Hero Page ──
+  // ── Cinematic Multiverse Collapse: Charge (Anchored) → Freeze (39 to 45 Giant Spots Flood Screen Black) → Unstable Screen Glitch (1s) → Hero Page ──
   const triggerMultiverseCollapse = () => {
     if (collapsePhaseRef.current !== "idle") return;
 
@@ -644,14 +888,14 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
     const height = canvas ? canvas.height : window.innerHeight;
 
     setTimeout(() => {
-      // 2. Freeze: Flood screen with 38 massive overlapping black spots (radii 140px to 320px)
+      // 2. Freeze: Flood screen with 39 to 45 massive overlapping black spots (radii 140px to 320px)
       setCollapsePhase("freeze_multiplying");
 
-      const totalNewSpots = 38;
+      const totalNewSpots = Math.floor(Math.random() * 7) + 39; // 39 to 45
       let accumulatedDelay = 0;
 
       for (let i = 0; i < totalNewSpots; i++) {
-        const stepDelay = Math.max(18, Math.floor(160 * Math.pow(0.92, i)));
+        const stepDelay = Math.max(16, Math.floor(150 * Math.pow(0.92, i)));
         accumulatedDelay += stepDelay;
 
         setTimeout(() => {
@@ -680,8 +924,6 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
     }, 500);
   };
 
-  const sequence = ["↑", "↑", "↓", "↓", "←", "→", "←", "→"];
-
   const mergedSpot = portalsRef.current.length === 1 ? portalsRef.current[0] : null;
 
   return (
@@ -706,7 +948,7 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
             </div>
 
             <div className="flex items-center gap-1">
-              {sequence.map((key, idx) => {
+              {SPOT_SEQUENCE.map((key, idx) => {
                 const isActive = idx < stepProgress;
                 return (
                   <div
@@ -750,6 +992,19 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
             {!isDossierOpen && collapsePhase === "idle" && (
               <div className="absolute top-6 right-6 z-30 flex items-center gap-2.5">
                 <button
+                  onClick={() => splitSpots()}
+                  disabled={splitCount >= MAX_SPLITS}
+                  className={`px-3.5 py-1.5 font-mono text-xs font-bold border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer flex items-center gap-1.5 ${
+                    splitCount >= MAX_SPLITS
+                      ? "bg-neutral-200 text-neutral-400 cursor-not-allowed"
+                      : "bg-[#FAF9F6] hover:bg-white text-black"
+                  }`}
+                  title={splitCount >= MAX_SPLITS ? "Max 3 splits reached" : "Split into 4 to 7 spots"}
+                >
+                  <Split className="w-3.5 h-3.5" />
+                  Split ({MAX_SPLITS - splitCount} left)
+                </button>
+                <button
                   onClick={() => setIsDossierOpen(true)}
                   className="px-3.5 py-1.5 bg-[#FAF9F6] hover:bg-white text-black font-mono text-xs font-bold border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer flex items-center gap-1.5"
                 >
@@ -765,36 +1020,47 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
               </div>
             )}
 
-            {/* ── CIRCULAR "INITIATE" BUTTON: Appears when all spots are merged (portalCount === 1) ── */}
+            {/* ── 3D TACTILE CIRCULAR "INITIATE" BUTTON: Appears ONLY when fully merged into 1 Giant Spot ── */}
             <AnimatePresence>
               {portalCount === 1 && collapsePhase === "idle" && (
                 <motion.button
-                  initial={{ scale: 0, opacity: 0, rotate: -20 }}
+                  initial={{ scale: 0, opacity: 0, rotate: -25 }}
                   animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                  exit={{ scale: 0, opacity: 0, rotate: 20 }}
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.94 }}
+                  exit={{ scale: 0, opacity: 0, rotate: 25 }}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.94, y: 2 }}
                   onClick={triggerMultiverseCollapse}
-                  className="absolute z-40 w-32 h-32 rounded-full bg-black text-white border-2 border-white/80 shadow-[0_0_35px_rgba(0,0,0,0.95)] flex flex-col items-center justify-center cursor-pointer select-none group transition-all"
+                  className="absolute z-40 w-36 h-36 rounded-full bg-gradient-to-b from-neutral-900 via-black to-neutral-950 text-white border-3 border-white/90 shadow-[0_20px_50px_rgba(0,0,0,0.95),0_0_0_4px_rgba(255,255,255,0.2),inset_0_3px_6px_rgba(255,255,255,0.4),inset_0_-6px_12px_rgba(0,0,0,0.95)] flex flex-col items-center justify-center cursor-pointer select-none group transition-all"
                   style={{
                     left: mergedSpot ? `${mergedSpot.x}px` : "50%",
                     top: mergedSpot ? `${mergedSpot.y}px` : "50%",
                     transform: "translate(-50%, -50%)",
                   }}
-                  title="Initiate Singularity Collapse"
+                  title="Initiate Multiverse Singularity Collapse"
                 >
-                  {/* Outer rotating dashed comic halo */}
+                  {/* Outer Counter-Clockwise Comic Orbital Halo */}
                   <div
-                    className="absolute -inset-2 rounded-full border-2 border-dashed border-white/40 animate-spin"
-                    style={{ animationDuration: "14s" }}
+                    className="absolute -inset-3.5 rounded-full border-2 border-dashed border-white/30 animate-spin pointer-events-none"
+                    style={{ animationDuration: "18s", animationDirection: "reverse" }}
                   />
-                  <Zap className="w-5 h-5 text-white mb-1 transition-transform group-hover:scale-110" />
-                  <span className="font-mono text-xs font-black tracking-widest uppercase text-white">
-                    Initiate
-                  </span>
-                  <span className="font-mono text-[9px] text-neutral-400 font-bold uppercase tracking-wider">
-                    Collapse
-                  </span>
+                  {/* Inner Clockwise Comic Dashed Halo */}
+                  <div
+                    className="absolute -inset-1.5 rounded-full border border-dashed border-white/60 animate-spin pointer-events-none"
+                    style={{ animationDuration: "10s" }}
+                  />
+
+                  {/* Radial Quantum Shimmer Flare Core */}
+                  <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-purple-600/20 via-transparent to-amber-500/20 pointer-events-none group-hover:opacity-100 transition-opacity" />
+
+                  <div className="relative z-10 flex flex-col items-center justify-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    <Zap className="w-5 h-5 text-amber-300 mb-1 transition-transform group-hover:scale-125 group-hover:rotate-12 duration-200" />
+                    <span className="font-mono text-xs font-black tracking-widest uppercase text-white drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">
+                      Initiate
+                    </span>
+                    <span className="font-mono text-[9px] text-neutral-400 font-bold uppercase tracking-wider group-hover:text-amber-300 transition-colors">
+                      Collapse
+                    </span>
+                  </div>
                 </motion.button>
               )}
             </AnimatePresence>
@@ -863,7 +1129,6 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
                       </div>
                     </div>
 
-                    {/* X button closes this control tab */}
                     <button
                       onClick={() => setIsDossierOpen(false)}
                       disabled={collapsePhase !== "idle"}
@@ -905,7 +1170,7 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
                         You Found the Portal.
                       </h3>
                       <p className="font-serif text-neutral-800 text-sm sm:text-base leading-relaxed">
-                        Sequence <span className="font-mono font-bold text-black bg-white/80 border border-black/20 px-1.5 py-0.5 rounded shadow-xs">↑↑↓↓←→←→</span> entered. Drag spots into each other to merge them into a single quantum singularity.
+                        Sequence <span className="font-mono font-bold text-black bg-white/80 border border-black/20 px-1.5 py-0.5 rounded shadow-xs">↑↑↓↓←→←→</span> entered. Drag spots to merge them, watch the last 2-3 spots accelerate into an intense 3-second black hole merger, or split up to 3 times.
                       </p>
                     </div>
 
@@ -918,12 +1183,16 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
                         </span>
                       </div>
                       <div className="p-3 bg-white/60 backdrop-blur-md border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                        <span className="text-[9px] text-neutral-600 block uppercase font-bold">Quantum Mesh</span>
-                        <span className="text-base sm:text-lg font-black text-black">ONLINE</span>
+                        <span className="text-[9px] text-neutral-600 block uppercase font-bold">Inspiral Orbit</span>
+                        <span className="text-base sm:text-lg font-black text-black">
+                          {portalCount <= 3 && portalCount > 1 ? "NUMERICAL RELATIVITY" : "ONLINE"}
+                        </span>
                       </div>
                       <div className="p-3 bg-white/60 backdrop-blur-md border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] col-span-2 sm:col-span-1">
-                        <span className="text-[9px] text-neutral-600 block uppercase font-bold">System Tier</span>
-                        <span className="text-base sm:text-lg font-black text-black">ROOT DEV</span>
+                        <span className="text-[9px] text-neutral-600 block uppercase font-bold">Splits Remaining</span>
+                        <span className="text-base sm:text-lg font-black text-black">
+                          {MAX_SPLITS - splitCount} / {MAX_SPLITS}
+                        </span>
                       </div>
                     </div>
 
@@ -936,26 +1205,40 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
                         </span>
                         <span className="text-emerald-400 font-bold">VERIFIED</span>
                       </div>
-                      <p className="text-neutral-300">&gt; physics engine: living ink portal merging & teleportation active</p>
+                      <p className="text-neutral-300">&gt; physics engine: SXS-inspired numerical relativity merger & ringdown active</p>
                       <p className="text-white font-bold pt-0.5">&gt; "Think. Research. Plan. Build. Validate. Loop."</p>
                     </div>
                   </div>
 
-                  {/* Action Buttons & Secret Singularity Collapse Button */}
+                  {/* Action Buttons & Controls */}
                   <div className="pt-2 border-t-2 border-black/80 flex flex-wrap items-center justify-between gap-2.5">
                     <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => splitSpots()}
+                        disabled={splitCount >= MAX_SPLITS}
+                        className={`px-3.5 py-2 border-2 border-black font-mono font-bold text-xs uppercase tracking-wider rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer flex items-center gap-1.5 ${
+                          splitCount >= MAX_SPLITS
+                            ? "bg-neutral-200 text-neutral-400 cursor-not-allowed border-neutral-400 shadow-none"
+                            : "bg-white/90 hover:bg-white text-black"
+                        }`}
+                        title={splitCount >= MAX_SPLITS ? "Max 3 splits reached" : "Split spots into 4 to 7 child voids"}
+                      >
+                        <Split className="w-3.5 h-3.5" />
+                        Split Spots ({MAX_SPLITS - splitCount})
+                      </button>
+
                       {portalCount === 1 ? (
                         <button
                           onClick={triggerMultiverseCollapse}
                           disabled={collapsePhase !== "idle"}
-                          className="px-4 py-2.5 bg-black hover:bg-neutral-900 text-white font-mono font-black text-xs uppercase tracking-wider rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-bounce transition-all cursor-pointer flex items-center gap-1.5"
+                          className="px-4 py-2 bg-black hover:bg-neutral-900 text-white font-mono font-black text-xs uppercase tracking-wider rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-bounce transition-all cursor-pointer flex items-center gap-1.5"
                         >
                           <Zap className="w-4 h-4 text-amber-300 animate-pulse" />
                           {collapsePhase === "charging" ? "CHARGING..." : collapsePhase === "freeze_multiplying" ? "CASCADING..." : "Initiate Collapse"}
                         </button>
                       ) : (
-                        <div className="font-mono text-xs font-bold text-neutral-500 flex items-center gap-1.5 py-2">
-                          <span>Drag spots together to merge them</span>
+                        <div className="font-mono text-[11px] font-bold text-neutral-500 flex items-center gap-1.5 py-2">
+                          <span>Drag to merge or watch 3s black hole inspiral</span>
                         </div>
                       )}
                     </div>
