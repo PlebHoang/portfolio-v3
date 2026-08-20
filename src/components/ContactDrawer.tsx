@@ -178,7 +178,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                         placeholder="E.g. Elena Rostova"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-neutral-400"
+                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-base sm:text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-neutral-400"
                       />
                     </div>
 
@@ -194,7 +194,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                         placeholder="E.g. elena@company.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-neutral-400"
+                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-base sm:text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-neutral-400"
                       />
                     </div>
 
@@ -210,7 +210,7 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({ isOpen, onClose })
                         placeholder="Describe your vision, scope, or timeline..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all resize-none placeholder-neutral-400"
+                        className="w-full p-4 border border-[#d4d4d0] rounded-xl bg-white/60 font-sans text-base sm:text-sm text-[#111111] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all resize-none placeholder-neutral-400"
                       />
                     </div>
 

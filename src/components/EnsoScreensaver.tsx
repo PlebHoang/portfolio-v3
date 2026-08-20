@@ -7,6 +7,7 @@ interface EnsoScreensaverProps {
 export const EnsoScreensaver: React.FC<EnsoScreensaverProps> = ({ onDismiss }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stampVisible, setStampVisible] = useState(false);
+  const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
   
   // Audio state
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -314,7 +315,9 @@ export const EnsoScreensaver: React.FC<EnsoScreensaverProps> = ({ onDismiss }) =
       </div>
 
       <div className="absolute top-8 font-mono text-[9px] tracking-[0.2em] uppercase text-white/50 pointer-events-none select-none text-center px-6">
-        Rake sand. Click anywhere to return. Ctrl+C to clear sand
+        {isTouch
+          ? "Drag to rake sand • Tap screen to return"
+          : "Rake sand. Click anywhere to return. Ctrl+C to clear sand"}
       </div>
     </div>
   );

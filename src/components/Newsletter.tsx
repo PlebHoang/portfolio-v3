@@ -142,7 +142,7 @@ export default function Newsletter() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={status === "submitting"}
-                      className="flex-1 px-4 py-3 bg-white border border-[#d4d4d0] rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-sans text-sm disabled:opacity-50"
+                      className="flex-1 px-4 py-3 bg-white border border-[#d4d4d0] rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-sans text-base sm:text-sm disabled:opacity-50"
                       required
                     />
                     <button

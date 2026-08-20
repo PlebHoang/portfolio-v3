@@ -246,8 +246,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full overflow-hidden select-none bg-[#F7F6F3] flex items-center justify-center pt-2 sm:pt-4 pb-8 sm:pb-12"
-      style={{ minHeight: "calc(100vh - 120px)" }}
+      className="relative w-full overflow-hidden select-none bg-[#F7F6F3] flex items-center justify-center pt-2 sm:pt-4 pb-6 sm:pb-12 min-h-[580px] sm:min-h-[640px] md:min-h-[calc(100vh-120px)]"
     >
       <style>{`
         @keyframes crtFlicker {
@@ -281,7 +280,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
         }
       `}</style>
 
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-10 h-full flex items-center justify-center relative min-h-[46vh] sm:min-h-[50vh] md:min-h-[56vh] -translate-y-8 sm:-translate-y-12 md:-translate-y-16">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 h-full flex items-center justify-center relative min-h-[48vh] sm:min-h-[52vh] md:min-h-[56vh] -translate-y-4 sm:-translate-y-8 md:-translate-y-16">
         
         {/* Layer 1: Solid Typography - Behind the image */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 10 }}>
@@ -294,13 +293,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
                     letterRefs.current[idx] = el;
                   }}
                   style={{ x: xSprings[idx], y: ySprings[idx] }}
-                  className="inline-block font-display font-black text-[15vw] md:text-[13vw] tracking-tighter text-[#111111] transition-opacity duration-200"
+                  className="inline-block font-display font-black text-[24vw] sm:text-[20vw] md:text-[13vw] tracking-tighter text-[#111111] transition-opacity duration-200"
                 >
                   {letter}
                 </motion.span>
               ))}
             </div>
-            <div className="flex justify-center mt-5 md:mt-7">
+            <div className="flex justify-center mt-3 sm:mt-5 md:mt-7">
               {secondRow.map((letter, idx) => {
                 const globalIdx = idx + firstRow.length;
                 return (
@@ -310,7 +309,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
                       letterRefs.current[globalIdx] = el;
                     }}
                     style={{ x: xSprings[globalIdx], y: ySprings[globalIdx] }}
-                    className="inline-block font-display font-black text-[15vw] md:text-[13vw] tracking-tighter text-[#111111] transition-opacity duration-200"
+                    className="inline-block font-display font-black text-[24vw] sm:text-[20vw] md:text-[13vw] tracking-tighter text-[#111111] transition-opacity duration-200"
                   >
                     {letter}
                   </motion.span>
@@ -326,7 +325,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
             src="./assets/myface-transparent.png"
             alt="Khoi Hoang"
             style={{ y: heroFaceY, scale: heroFaceScale }}
-            className="h-[44vh] sm:h-[50vh] md:h-[56vh] max-h-[480px] w-auto object-contain pointer-events-auto filter grayscale contrast-[1.1] brightness-[1.03] select-none"
+            className="h-[52vh] sm:h-[54vh] md:h-[56vh] max-h-[440px] sm:max-h-[460px] md:max-h-[480px] w-auto object-contain pointer-events-auto filter grayscale contrast-[1.1] brightness-[1.03] select-none"
             data-cursor="view"
           />
         </div>
@@ -348,13 +347,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
                     color: "transparent",
                     WebkitTextFillColor: "transparent"
                   }}
-                  className="inline-block font-display font-black text-[15vw] md:text-[13vw] tracking-tighter transition-opacity duration-200"
+                  className="inline-block font-display font-black text-[24vw] sm:text-[20vw] md:text-[13vw] tracking-tighter transition-opacity duration-200"
                 >
                   {letter}
                 </motion.span>
               ))}
             </div>
-            <div className="flex justify-center mt-5 md:mt-7">
+            <div className="flex justify-center mt-3 sm:mt-5 md:mt-7">
               {secondRow.map((letter, idx) => {
                 const globalIdx = idx + firstRow.length;
                 return (
@@ -370,7 +369,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
                       color: "transparent",
                       WebkitTextFillColor: "transparent"
                     }}
-                    className="inline-block font-display font-black text-[15vw] md:text-[13vw] tracking-tighter transition-opacity duration-200"
+                    className="inline-block font-display font-black text-[24vw] sm:text-[20vw] md:text-[13vw] tracking-tighter transition-opacity duration-200"
                   >
                     {letter}
                   </motion.span>
@@ -388,26 +387,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
           y: heroBottomY,
           opacity: heroBottomOpacity,
         }}
-        className="absolute bottom-2 sm:bottom-3 md:bottom-4 left-1/2 -translate-x-1/2 z-25 flex flex-col items-center gap-2.5 select-none w-full max-w-lg sm:max-w-xl md:max-w-2xl px-4 will-change-transform"
+        className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-25 flex flex-col items-center gap-2 sm:gap-3.5 select-none w-full max-w-[92%] sm:max-w-2xl md:max-w-3xl px-2 sm:px-6 will-change-transform"
       >
         {/* Terminal HUD Box with CRT Boot Flicker */}
-        <div className={`border-2 border-black bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 md:p-4.5 w-full text-left font-mono shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] space-y-2 transition-all ${isBooted ? 'animate-crt' : 'opacity-0'}`}>
+        <div className={`border-2 border-black bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-2.5 sm:p-5 md:p-6 w-full text-left font-mono shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-1.5 sm:space-y-2.5 transition-all ${isBooted ? 'animate-crt' : 'opacity-0'}`}>
           
           {/* Top Static Header */}
-          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-1.5 text-[11px] sm:text-xs text-neutral-500 font-bold uppercase tracking-wide">
-            <span className="flex items-center gap-2 text-neutral-900 font-bold">
-              <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+          <div className="flex items-center justify-between border-b border-[#d4d4d0] pb-1 sm:pb-2 text-[10px] sm:text-xs md:text-sm text-neutral-500 font-bold uppercase tracking-wide">
+            <span className="flex items-center gap-1.5 sm:gap-2.5 text-neutral-900 font-bold">
+              <span className="w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 rounded-full bg-black animate-pulse" />
               sys://khoi.portfolio
             </span>
-            <span className="text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 text-[10px] font-bold">
-              Status: Active
+            <span className="text-neutral-800 bg-neutral-100 px-1.5 sm:px-2.5 py-0.5 rounded-full border border-neutral-200 text-[9px] sm:text-xs font-bold">
+              Active
             </span>
           </div>
           
-          <div className="space-y-1.5 pt-0.5 text-neutral-800 text-xs sm:text-[13px] md:text-sm min-h-[50px]">
+          <div className="space-y-1 sm:space-y-1.5 pt-0.5 text-neutral-800 text-[11px] sm:text-sm md:text-base min-h-[40px] sm:min-h-[54px] md:min-h-[60px]">
             {/* Line 1: Role */}
             {phase !== "idle" && phase !== "boot" && (
-              <div className="flex items-center gap-2 flex-wrap min-h-[22px]">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap min-h-[18px] sm:min-h-[26px]">
                 <span className={`text-neutral-400 font-bold ${phase === 'flicker-role' ? 'animate-prompt-flicker' : ''}`}>
                   &gt; role:
                 </span>
@@ -421,14 +420,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
                 )}
 
                 {phase === "typing-role" && (
-                  <span className="inline-block w-2.5 h-3.5 bg-black align-middle animate-terminal-cursor" />
+                  <span className="inline-block w-2 sm:w-3 h-3 sm:h-4 bg-black align-middle animate-terminal-cursor" />
                 )}
               </div>
             )}
 
             {/* Line 2: Focus */}
             {(phase === "flicker-focus" || phase === "thinking-focus" || phase === "typing-focus" || phase === "done") && (
-              <div className="flex items-center gap-2 flex-wrap min-h-[22px]">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap min-h-[18px] sm:min-h-[26px]">
                 <span className={`text-neutral-400 font-bold ${phase === 'flicker-focus' ? 'animate-prompt-flicker' : ''}`}>
                   &gt; focus:
                 </span>
@@ -442,7 +441,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
                 )}
 
                 {(phase === "typing-focus" || phase === "done") && (
-                  <span className="inline-block w-2.5 h-3.5 bg-black align-middle animate-terminal-cursor" />
+                  <span className="inline-block w-2 sm:w-3 h-3 sm:h-4 bg-black align-middle animate-terminal-cursor" />
                 )}
               </div>
             )}
@@ -450,19 +449,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onAboutOpen, isReady =
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2.5 pt-0.5">
+        <div className="flex gap-2.5 sm:gap-3.5 pt-0.5">
           <button
             onClick={() => {
               const el = document.getElementById("works");
               if (el) el.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-6 py-2.5 bg-black text-white font-sans text-xs font-bold tracking-widest uppercase rounded hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
+            className="px-5 sm:px-8 py-2 sm:py-3 bg-black text-white font-sans text-[11px] sm:text-xs md:text-sm font-bold tracking-widest uppercase rounded hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all cursor-pointer"
           >
             View Work
           </button>
           <button
             onClick={onAboutOpen}
-            className="px-6 py-2.5 border border-[#d4d4d0] bg-white text-black font-sans text-xs font-bold tracking-widest uppercase rounded hover:border-black hover:bg-neutral-50 transition-colors cursor-pointer"
+            className="px-5 sm:px-8 py-2 sm:py-3 border border-[#d4d4d0] bg-white text-black font-sans text-[11px] sm:text-xs md:text-sm font-bold tracking-widest uppercase rounded hover:border-black hover:bg-neutral-50 transition-colors cursor-pointer"
           >
             About Me
           </button>

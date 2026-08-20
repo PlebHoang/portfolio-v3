@@ -71,7 +71,7 @@ export const ItemDrawer: React.FC<ItemDrawerProps> = ({ item, onClose }) => {
     <>
       <Drawer isOpen={!!item} onClose={handleClose} title="Project Details">
         {item && (
-          <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8">
+          <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-6 sm:space-y-8">
             {/* Header: Title & Badges */}
             <div className="space-y-3">
               {item.highlight && (

@@ -455,11 +455,11 @@ export default function App() {
 
       <div className="min-h-screen flex flex-col justify-between selection:bg-black selection:text-white relative bg-[#F7F6F3]">
         {/* Subtle dot-grid texture overlay */}
-        <div className="pointer-events-none fixed inset-0 opacity-[0.018] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:24px_24px] z-40" />
+        <div className="pointer-events-none fixed inset-0 opacity-[0.025] sm:opacity-[0.055] md:opacity-[0.065] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:24px_24px] z-40" />
 
         {/* ── HEADER ── */}
         <motion.header style={{ boxShadow: headerShadow }} className="sticky top-0 w-full z-50 bg-[#F7F6F3]/80 backdrop-blur-md border-b border-[#d4d4d0]">
-          <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-3.5 sm:py-4 flex items-center justify-between">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="flex items-center gap-1.5 cursor-pointer select-none group"
@@ -471,13 +471,13 @@ export default function App() {
               <div className="w-1.5 h-1.5 bg-black rounded-full animate-pulse mt-2" />
             </button>
 
-            <nav className="flex items-center gap-6 md:gap-8">
-              {/* Design Grid Toggle */}
+            <nav className="flex items-center gap-3 sm:gap-5 md:gap-8">
+              {/* Design Grid Toggle (Desktop Only) */}
               <button
                 onClick={() => setShowGrid(!showGrid)}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className="px-3 py-1.5 border border-[#d4d4d0] hover:border-black hover:bg-neutral-100 rounded transition-all cursor-pointer flex items-center gap-2 text-xs font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black"
+                className="hidden md:flex px-3 py-1.5 border border-[#d4d4d0] hover:border-black hover:bg-neutral-100 rounded transition-all cursor-pointer items-center gap-2 text-xs font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black"
                 title="Toggle Design Grid (Ctrl+G)"
               >
                 <svg
@@ -511,7 +511,7 @@ export default function App() {
                   onClick={action}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
-                  className="relative py-1 group cursor-pointer text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
+                  className="relative py-1 group cursor-pointer text-[11px] sm:text-xs md:text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
                   id={`nav-${label.toLowerCase()}`}
                 >
                   {label}
@@ -522,7 +522,7 @@ export default function App() {
                 to="/newsletter"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className="relative py-1 group cursor-pointer text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
+                className="relative py-1 group cursor-pointer text-[11px] sm:text-xs md:text-[13px] font-sans font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
               >
                 Newsletter
                 <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
@@ -802,7 +802,11 @@ export default function App() {
               <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">⌘K</kbd> command palette · <kbd className="px-1.5 py-0.5 border border-[#d4d4d0] bg-white rounded shadow-sm text-neutral-600">↑↑↓↓←→←→BA</kbd> secret code
             </div>
 
-            <div className="flex items-center gap-8 text-xs font-sans font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-6 sm:gap-8 text-xs font-sans font-bold uppercase tracking-wider">
+              <Link to="/newsletter" className="relative py-1 group hover:text-black transition-colors">
+                Newsletter
+                <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />
+              </Link>
               <a href="https://www.linkedin.com/in/hoangnguyenkhoi/" target="_blank" rel="noreferrer" className="relative py-1 group hover:text-black transition-colors">
                 LinkedIn
                 <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black group-hover:w-full transition-all duration-300 ease-out" />

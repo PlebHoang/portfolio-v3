@@ -287,9 +287,10 @@ export const BucketList: React.FC = () => {
               <h3 className="font-display font-black text-base uppercase tracking-tight">Propose a Challenge</h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 text-neutral-400 hover:text-black font-bold text-xs cursor-pointer"
+                className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-neutral-400 hover:text-black hover:bg-neutral-100 transition-colors cursor-pointer"
+                aria-label="Close modal"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -302,7 +303,7 @@ export const BucketList: React.FC = () => {
                   value={inputTitle}
                   onChange={e => setInputTitle(e.target.value)}
                   placeholder="e.g. 3D design an FPV simulator rig"
-                  className="w-full p-2.5 text-xs border border-[#d4d4d0] rounded-xl outline-none focus:border-black bg-[#FAF9F6]"
+                  className="w-full p-2.5 text-base sm:text-xs border border-[#d4d4d0] rounded-xl outline-none focus:border-black bg-[#FAF9F6]"
                 />
               </div>
 
@@ -311,7 +312,7 @@ export const BucketList: React.FC = () => {
                 <select
                   value={inputCategory}
                   onChange={e => setInputCategory(e.target.value as any)}
-                  className="w-full p-2.5 text-xs border border-[#d4d4d0] rounded-xl outline-none focus:border-black bg-[#FAF9F6]"
+                  className="w-full p-2.5 text-base sm:text-xs border border-[#d4d4d0] rounded-xl outline-none focus:border-black bg-[#FAF9F6]"
                 >
                   <option value="hardware">Hardware & Robotics</option>
                   <option value="adventure">Adventure & Endurance</option>
@@ -326,7 +327,7 @@ export const BucketList: React.FC = () => {
                   value={inputAuthor}
                   onChange={e => setInputAuthor(e.target.value)}
                   placeholder="e.g. Alex"
-                  className="w-full p-2.5 text-xs border border-[#d4d4d0] rounded-xl outline-none focus:border-black bg-[#FAF9F6]"
+                  className="w-full p-2.5 text-base sm:text-xs border border-[#d4d4d0] rounded-xl outline-none focus:border-black bg-[#FAF9F6]"
                 />
               </div>
 

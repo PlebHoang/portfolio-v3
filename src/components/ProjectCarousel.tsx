@@ -24,6 +24,10 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
   const containerRef = useRef<HTMLDivElement>(null);
   const lastWheelTime = useRef<number>(0);
 
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
   // Auto-play timer (3s per slot), permanently stops once user interacts
   useEffect(() => {
     if (isPaused || hasInteracted || projects.length === 0) return;
@@ -61,6 +65,34 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
     return () => el.removeEventListener("wheel", handleWheel);
   }, [projects.length]);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const deltaX = endX - touchStartX.current;
+    const deltaY = endY - touchStartY.current;
+
+    if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      setHasInteracted(true);
+      setIsPaused(true);
+      if (deltaX < 0) {
+        setActiveIndex((prev) => (prev + 1) % projects.length);
+      } else {
+        setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   const handleSelect = (idx: number) => {
     setHasInteracted(true);
     setIsPaused(true);
@@ -84,6 +116,8 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
       className="relative w-full py-8 flex flex-col items-center justify-center select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Slot Machine Display Stage */}
       <div className="relative w-full max-w-7xl h-[340px] sm:h-[420px] md:h-[480px] flex items-center justify-center overflow-hidden">
@@ -178,8 +212,10 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects, onSe
           />
         ))}
       </div>
-      <p className="font-sans text-[11px] font-bold text-neutral-400 uppercase tracking-widest mt-3">
-        Scroll wheel over gallery to spin • Click to inspect
+      <p className="font-sans text-[11px] font-bold text-neutral-400 uppercase tracking-widest mt-3 text-center px-4">
+        {isTouch
+          ? "Swipe to explore • Tap to inspect"
+          : "Scroll wheel over gallery to spin • Click to inspect"}
       </p>
     </div>
   );

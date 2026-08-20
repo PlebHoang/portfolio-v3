@@ -64,7 +64,7 @@ export const PillNav: React.FC<PillNavProps> = ({ onOpenPalette }) => {
   if (!visible) return null;
 
   return (
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 p-1.5 bg-[#111111]/90 backdrop-blur-md border border-white/10 rounded-full shadow-2xl transition-all duration-300">
+    <nav className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center max-w-[calc(100vw-1.5rem)] overflow-x-auto scrollbar-none gap-0.5 sm:gap-1 p-1 sm:p-1.5 bg-[#111111]/90 backdrop-blur-md border border-white/10 rounded-full shadow-2xl transition-all duration-300">
       {sections.map((id, index) => {
         const label = id === "hero" ? "Top" : id === "bucket" ? "Bucket" : id;
         return (
@@ -72,7 +72,7 @@ export const PillNav: React.FC<PillNavProps> = ({ onOpenPalette }) => {
             key={id}
             onClick={() => scrollTo(id)}
             title={`Shortcut: ${index + 1}`}
-            className={`px-3 py-1.5 text-[10px] font-sans font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-sans font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
               activeSection === id
                 ? "bg-white/10 text-white animate-pulse"
                 : "text-neutral-400 hover:text-white"
@@ -82,10 +82,10 @@ export const PillNav: React.FC<PillNavProps> = ({ onOpenPalette }) => {
           </button>
         );
       })}
-      <div className="w-[1px] h-3 bg-white/15 mx-1" />
+      <div className="hidden sm:block w-[1px] h-3 bg-white/15 mx-1 flex-shrink-0" />
       <button
         onClick={onOpenPalette}
-        className="px-2.5 py-1.5 text-[9px] font-mono text-neutral-500 hover:text-neutral-300 hover:bg-white/5 rounded-full transition-all cursor-pointer"
+        className="hidden sm:block px-2.5 py-1.5 text-[9px] font-mono text-neutral-500 hover:text-neutral-300 hover:bg-white/5 rounded-full transition-all cursor-pointer flex-shrink-0"
         title="Open Command Palette"
       >
         ⌘K

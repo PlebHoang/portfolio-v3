@@ -37,6 +37,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     { label: "View Capabilities", icon: "⚡", action: () => scrollTo("capabilities"), shortcut: "C" },
     { label: "Open About", icon: "👤", action: onOpenAbout, shortcut: "A" },
     { label: "Open Contact", icon: "✉️", action: onOpenContact, shortcut: "M" },
+    { label: "Read Newsletter / Thoughts", icon: "📰", action: () => { window.location.hash = "/newsletter"; }, shortcut: "N" },
     { label: "Email Me", icon: "📧", action: () => { window.location.href = "mailto:hoangnguyenkhoi07@gmail.com"; }, shortcut: "E" },
     { label: "LinkedIn", icon: "🔗", action: () => window.open("https://www.linkedin.com/in/hoangnguyenkhoi/", "_blank"), shortcut: "L" },
     { label: "GitHub", icon: "🐙", action: () => window.open("https://github.com/PlebHoang", "_blank"), shortcut: "G" },
@@ -102,7 +103,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             setSelectedIndex(0);
           }}
           placeholder="Type a command..."
-          className="w-full p-5 font-mono text-sm border-0 border-b border-[#d4d4d0] bg-transparent text-black outline-none"
+          className="w-full p-4 sm:p-5 font-mono text-base sm:text-sm border-0 border-b border-[#d4d4d0] bg-transparent text-black outline-none"
         />
         <div className="max-h-[300px] overflow-y-auto p-2">
           {filtered.length > 0 ? (

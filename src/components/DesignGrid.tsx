@@ -106,19 +106,19 @@ export const DesignGrid: React.FC<DesignGridProps> = ({ isVisible }) => {
                   onMouseLeave={() => setHoveredCol(null)}
                   className={`h-full w-full border-l border-r transition-colors duration-200 relative flex flex-col justify-between cursor-crosshair ${
                     isHovered
-                      ? "border-black/30 bg-black/[0.04]"
-                      : "border-black/[0.08] bg-black/[0.015]"
+                      ? "border-black/50 bg-black/[0.07]"
+                      : "border-black/[0.14] sm:border-black/[0.18] bg-black/[0.025] sm:bg-black/[0.035]"
                   }`}
                 >
                   {/* Column Index & Hover Specs */}
                   <div className="sticky top-20 pt-2 px-1 flex flex-col items-center">
-                    <span className={`font-mono text-[9px] font-bold transition-colors ${
-                      isHovered ? "text-black bg-white px-1.5 py-0.5 rounded shadow-xs border border-black/20" : "text-neutral-400"
+                    <span className={`font-mono text-[9px] sm:text-[10px] font-bold transition-colors ${
+                      isHovered ? "text-black bg-white px-1.5 py-0.5 rounded shadow-xs border border-black/30" : "text-neutral-600 font-semibold"
                     }`}>
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     {isHovered && (
-                      <span className="font-mono text-[8px] text-black bg-white/95 px-1 py-0.5 mt-1 rounded border border-black/10 shadow-xs whitespace-nowrap">
+                      <span className="font-mono text-[8px] sm:text-[9px] text-black bg-white/95 px-1.5 py-0.5 mt-1 rounded border border-black/20 shadow-xs whitespace-nowrap">
                         COL {idx + 1} / 12
                       </span>
                     )}
@@ -130,13 +130,13 @@ export const DesignGrid: React.FC<DesignGridProps> = ({ isVisible }) => {
         )}
         
         {/* Max-width container boundary guidelines & Corner Brackets */}
-        <div className="absolute inset-y-0 left-6 right-6 md:left-10 md:right-10 border-l border-r border-dashed border-black/20 pointer-events-none" />
+        <div className="absolute inset-y-0 left-6 right-6 md:left-10 md:right-10 border-l border-r border-dashed border-black/35 pointer-events-none" />
       </div>
 
       {/* Horizontal Baseline Grid (8px vertical rhythm) */}
       {showBaseline && (
         <div
-          className="absolute inset-0 opacity-[0.018] pointer-events-none"
+          className="absolute inset-0 opacity-[0.045] pointer-events-none"
           style={{
             backgroundImage: "linear-gradient(to bottom, #000000 1px, transparent 1px)",
             backgroundSize: "100% 8px",
