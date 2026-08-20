@@ -236,27 +236,39 @@ class InkPortal {
     }
 
     if (!isInspiral) {
+      // ── Continuous Ambient Cosmic Entropy Drift (Perpetual subtle wander) ──
+      const entropyNoiseX = Math.cos(this.wobblePhase * 0.7 + this.x * 0.005) * 0.25;
+      const entropyNoiseY = Math.sin(this.wobblePhase * 0.8 + this.y * 0.005) * 0.25;
+
+      this.vx = (this.vx + entropyNoiseX * 0.12) * 0.985;
+      this.vy = (this.vy + entropyNoiseY * 0.12) * 0.985;
+
+      // Soft entropy floor so spots never sit completely still (~0.28 to 0.45px/frame)
+      const currentSpeed = Math.hypot(this.vx, this.vy);
+      if (currentSpeed < 0.25) {
+        const wanderAngle = this.wobblePhase + this.radius * 0.1;
+        this.vx += Math.cos(wanderAngle) * 0.06;
+        this.vy += Math.sin(wanderAngle) * 0.06;
+      }
+
       this.x += this.vx;
       this.y += this.vy;
 
-      this.vx *= 0.985;
-      this.vy *= 0.985;
-
-      // Bounds bounce
+      // Bounds bounce with soft cushion
       if (this.x < this.radius) {
         this.x = this.radius;
-        this.vx = Math.abs(this.vx) * 0.8;
+        this.vx = Math.abs(this.vx) * 0.85;
       } else if (this.x > width - this.radius) {
         this.x = width - this.radius;
-        this.vx = -Math.abs(this.vx) * 0.8;
+        this.vx = -Math.abs(this.vx) * 0.85;
       }
 
       if (this.y < this.radius) {
         this.y = this.radius;
-        this.vy = Math.abs(this.vy) * 0.8;
+        this.vy = Math.abs(this.vy) * 0.85;
       } else if (this.y > height - this.radius) {
         this.y = height - this.radius;
-        this.vy = -Math.abs(this.vy) * 0.8;
+        this.vy = -Math.abs(this.vy) * 0.85;
       }
 
       // Cursor attraction when hovering
@@ -654,14 +666,25 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
 
       const numSpots = portalsRef.current.length;
       const isGravityActive = performance.now() >= gravityDisabledUntilRef.current;
-      const isCandidateInspiral = isGravityActive && (numSpots === 2 || numSpots === 3);
+
+      // Inspiral vortex only engages when the 2 or 3 spots have comparable sizes (within 2.2x ratio).
+      // If one spot is gigantic and the others are tiny, the giant spot acts as an anchored supermassive attractor.
+      let isComparableSize = false;
+      if (numSpots === 2 || numSpots === 3) {
+        const radii = portalsRef.current.map((p) => p.radius);
+        const maxR = Math.max(...radii);
+        const minR = Math.min(...radii);
+        isComparableSize = maxR / Math.max(1, minR) < 2.2;
+      }
+
+      const isCandidateInspiral = isGravityActive && isComparableSize;
 
       let baryX = 0;
       let baryY = 0;
       let inspiralActive = false;
       let chaosLevel = 0; // 0 to 1
 
-      // ── Numerical Relativity 3-Second Inspiral Merger Simulation ──
+      // ── Numerical Relativity 3-Second Inspiral Merger Simulation (For comparable binary/ternary pairs) ──
       if (currentPhase === "idle" && isCandidateInspiral && !draggedPortalRef.current) {
         let totalMass = 0;
         let bx = 0;
@@ -725,7 +748,8 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
             });
           } else {
             chaosLevel = Math.max(0, (tau - 0.2) / 0.8);
-            const angleChirp = 3.6 * elapsedSec + 28.0 * Math.pow(tau, 2.3);
+            // Smooth ease-in chirp eliminating any initial angular velocity jerk
+            const angleChirp = 5.2 * Math.pow(tau, 1.3) + 26.0 * Math.pow(tau, 2.4);
 
             for (const node of session.nodes) {
               const p = node.portal;
@@ -760,7 +784,7 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
         sessionRef.current = null;
       }
 
-      // Autonomous Pairwise Merging for Free-Floating & Dragged Spots (when NOT in collective inspiral)
+      // Autonomous Pairwise Merging & Accretion (when NOT in collective inspiral)
       if (currentPhase === "idle" && !inspiralActive && portalsRef.current.length > 1) {
         const activePortals = portalsRef.current;
         for (let i = 0; i < activePortals.length; i++) {
@@ -800,22 +824,35 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
                 setSplitCount(0);
               }
               j--;
-            } else if (isGravityActive && dist < (p1.radius + p2.radius) * 3.2 && dist > 1) {
-              // Mass-weighted inverse-distance gravitational attraction (active only after split grace period)
-              const pull = Math.min(2.0, ((p1.radius + p2.radius) * 12) / Math.max(30, dist));
+            } else if (isGravityActive && dist < (p1.radius + p2.radius) * 3.5 && dist > 1) {
+              // Mass-proportional gravitational acceleration:
+              // Heavier black holes remain firmly anchored while lighter spots accelerate toward them
+              const m1 = p1.radius ** 2;
+              const m2 = p2.radius ** 2;
+              const totalM = m1 + m2;
+              const pullForce = Math.min(2.5, ((p1.radius + p2.radius) * 14) / Math.max(30, dist));
               const nx = dx / dist;
               const ny = dy / dist;
-              p1.vx += nx * pull * 0.1;
-              p1.vy += ny * pull * 0.1;
-              p2.vx -= nx * pull * 0.1;
-              p2.vy -= ny * pull * 0.1;
+
+              p1.vx += nx * pullForce * (m2 / totalM) * 0.2;
+              p1.vy += ny * pullForce * (m2 / totalM) * 0.2;
+              p2.vx -= nx * pullForce * (m1 / totalM) * 0.2;
+              p2.vy -= ny * pullForce * (m1 / totalM) * 0.2;
             }
           }
         }
       }
 
-      // Draw portals cleanly with subtle living ink wobble
+      // Smoothly drift single giant singularity to viewport center
       const livePortals = portalsRef.current;
+      if (livePortals.length === 1 && !livePortals[0].isDragged && currentPhase === "idle") {
+        livePortals[0].x += (width * 0.5 - livePortals[0].x) * 0.08;
+        livePortals[0].y += (height * 0.5 - livePortals[0].y) * 0.08;
+        livePortals[0].vx = 0;
+        livePortals[0].vy = 0;
+      }
+
+      // Draw portals cleanly with subtle living ink wobble
       if (currentPhase !== "glitching") {
         livePortals.forEach((p) => {
           p.update(width, height, mouseRef.current, isFrozen, inspiralActive);
@@ -1030,12 +1067,7 @@ export const SpotEasterEgg: React.FC<SpotEasterEggProps> = ({ isOpen, onClose, s
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.94, y: 2 }}
                   onClick={triggerMultiverseCollapse}
-                  className="absolute z-40 w-36 h-36 rounded-full bg-gradient-to-b from-neutral-900 via-black to-neutral-950 text-white border-3 border-white/90 shadow-[0_20px_50px_rgba(0,0,0,0.95),0_0_0_4px_rgba(255,255,255,0.2),inset_0_3px_6px_rgba(255,255,255,0.4),inset_0_-6px_12px_rgba(0,0,0,0.95)] flex flex-col items-center justify-center cursor-pointer select-none group transition-all"
-                  style={{
-                    left: mergedSpot ? `${mergedSpot.x}px` : "50%",
-                    top: mergedSpot ? `${mergedSpot.y}px` : "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-36 h-36 rounded-full bg-gradient-to-b from-neutral-900 via-black to-neutral-950 text-white border-3 border-white/90 shadow-[0_20px_50px_rgba(0,0,0,0.95),0_0_0_4px_rgba(255,255,255,0.2),inset_0_3px_6px_rgba(255,255,255,0.4),inset_0_-6px_12px_rgba(0,0,0,0.95)] flex flex-col items-center justify-center cursor-pointer select-none group transition-all"
                   title="Initiate Multiverse Singularity Collapse"
                 >
                   {/* Outer Counter-Clockwise Comic Orbital Halo */}
