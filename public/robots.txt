@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /assets/*.pdf
+Disallow: /assets/*.xlsm
+Disallow: /portfolio-compiled.html

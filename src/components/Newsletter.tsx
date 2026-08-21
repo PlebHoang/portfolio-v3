@@ -26,16 +26,10 @@ export default function Newsletter() {
     };
 
     if (!NEWSLETTER_API_URL) {
-      // Local fallback / simulation when no backend endpoint is configured
+      // Local simulation when no backend endpoint is configured
       setTimeout(() => {
         setStatus("success");
-        try {
-          const stored = JSON.parse(localStorage.getItem("newsletter_subscribers") || "[]");
-          stored.push(payload);
-          localStorage.setItem("newsletter_subscribers", JSON.stringify(stored));
-        } catch {
-          // ignore storage errors
-        }
+        setEmail("");
       }, 700);
       return;
     }

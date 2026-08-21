@@ -80,7 +80,7 @@ const experiences: Experience[] = [
       "Sensor Telemetry",
       "Electrical Schematics",
     ],
-    link: "https://docs.google.com/document/d/1sT7qXY-lAWTg8jxPSdger41W5dxy_NhA/edit?usp=sharing&ouid=105069165714848853856&rtpof=true&sd=true",
+    link: "https://docs.google.com/document/d/1sT7qXY-lAWTg8jxPSdger41W5dxy_NhA/edit?usp=sharing",
   },
   {
     id: "student-gov",
@@ -167,9 +167,8 @@ const allProjects: CarouselProject[] = [
     image: "./assets/excel-beast-thumb.png",
     mediaType: "spreadsheet",
     spreadsheet: {
-      downloadUrl: "./assets/33-sheets-beast.xlsm",
-      fileLabel: "Parametric Factory Operations Model (.XLSM)",
-      size: "734 KB",
+      fileLabel: "Parametric Factory Operations Architecture (33 Modules)",
+      size: "33 Worksheets",
       sheetsCount: 33,
       sheets: [
         { code: "S01", name: "Production Morphology", desc: "Process taxonomy & machine classification" },

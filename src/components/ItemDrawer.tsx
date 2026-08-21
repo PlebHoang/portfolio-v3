@@ -223,14 +223,16 @@ export const ItemDrawer: React.FC<ItemDrawerProps> = ({ item, onClose }) => {
                     </div>
                   )}
 
-                  <a
-                    href={item.spreadsheet.downloadUrl}
-                    download="Parametric_Factory_Optimization_Model.xlsm"
-                    className="w-full py-2.5 bg-black text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors cursor-pointer"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download Operations Model (.XLSM)
-                  </a>
+                  {item.spreadsheet.downloadUrl && (
+                    <a
+                      href={item.spreadsheet.downloadUrl}
+                      download="Parametric_Factory_Optimization_Model.xlsm"
+                      className="w-full py-2.5 bg-black text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors cursor-pointer"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Operations Model (.XLSM)
+                    </a>
+                  )}
                 </div>
 
                 {/* Structured Sheet Hierarchy Breakdown */}
